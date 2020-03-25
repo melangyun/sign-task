@@ -10,4 +10,4 @@ import { Signature } from "./signature.entity";
     providers:[SignatureService],
     exports:[TypeOrmModule]
 })
-export class UserModule {}
+export class SignatureModule {}
