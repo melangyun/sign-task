@@ -12,11 +12,7 @@ export class TeamUser{
     // @JoinColumn({name: "user_id"})
     user!: User;
 
-    @Column({
-        type:"simple-json",
-        nullable: false,
-        default:JSON.stringify({"lookup" : false, "add" : false, "delete": false})
-    })
-    auth : { "lookup" : boolean, "add" : boolean, "delete": boolean };
+    @Column({ type:"simple-json", nullable: false, default:'{"lookup":false,"add":false,"delete":false}'})
+    auth!: {"lookup":boolean,"add":boolean,"delete":boolean};
 
 }
