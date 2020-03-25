@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Signature } from "../Signature/signature.entity";
 
 @Entity()
 export class User {
@@ -20,5 +21,8 @@ isActive!: string;
 
 @Column({type:"varchar", nullable:false})
 refreshToken!: string;
+
+@OneToMany( type => Signature , signature => signature.user)
+signatures!: Signature[];
 
 }
