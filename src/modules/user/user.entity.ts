@@ -1,5 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 import { Signature } from "../Signature/signature.entity";
+import { Team } from "../Team/team.entity";
+import { TeamUser } from "../Team/teamuser.entity";
 
 @Entity()
 export class User {
@@ -24,5 +26,11 @@ refreshToken!: string;
 
 @OneToMany( type => Signature , signature => signature.user)
 signatures!: Signature[];
+
+@OneToMany( type => Team , signature => signature.user)
+teams!: Team[];
+
+@OneToMany( type => TeamUser , teamUser => teamUser.user)
+teamUsers!: TeamUser[];
 
 }
