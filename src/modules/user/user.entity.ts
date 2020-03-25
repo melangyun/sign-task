@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 import { Signature } from "../Signature/signature.entity";
-import { Team } from "../Team/team.entity";
-import { TeamUser } from "../Team/teamuser.entity";
+import { Team } from "../team/team.entity";
+import { TeamUser } from "../team/teamuser.entity";
 
 @Entity()
 export class User {

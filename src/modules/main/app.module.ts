@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { SignatureModule } from "../Signature/signature.module";
-import { TeamModule } from "../Team/team.module";
+import { TeamModule } from "../team/team.module";
+import { Connection } from 'typeorm';
 
 @Module({
   imports: [
@@ -16,4 +17,6 @@ import { TeamModule } from "../Team/team.module";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private connection: Connection) {}
+}
