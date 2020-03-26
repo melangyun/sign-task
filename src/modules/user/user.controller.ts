@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { Signup } from "./user.type";
+import { Signup } from "../../types/user.type";
 
 import { signupSchema } from "./user.schema";
 
