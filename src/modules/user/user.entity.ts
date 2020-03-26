@@ -15,9 +15,6 @@ nickname!: string;
 @Column({type:"varchar", nullable:false})
 password!: string;
 
-@Column({type:"varchar", nullable:false})
-salt!: string;
-
 @Column({name:"is_active",type:"varchar", nullable:false, default: true})
 isActive!: string;
 
