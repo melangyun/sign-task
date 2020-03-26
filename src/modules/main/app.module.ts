@@ -7,28 +7,16 @@ import { SignatureModule } from "../Signature/signature.module";
 import { TeamModule } from "../team/team.module";
 import { Connection } from 'typeorm';
 import { AuthModule } from '../auth/auth.module';
-// import { ConfigModule } from '@nestjs/config';
-// import * as Joi from '@hapi/joi';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   validationSchema: Joi.object({
-    //     NODE_ENV: Joi.string()
-    //       .valid('development', 'production', 'test', 'provision')
-    //       .default('development'),
-    //     PORT: Joi.number().default(3000),
-    //   }),
-    //   validationOptions: {
-    //     allowUnknown: false,
-    //     abortEarly: true,
-    //   },
-    // }),
+    ConfigModule.forRoot({isGlobal:true}),
     TypeOrmModule.forRoot(),
     UserModule,
     SignatureModule,
     TeamModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
