@@ -9,13 +9,13 @@ export class UserController{
     constructor(private readonly userService : UserService){}
 
     @Post()
-    public async Signup ( @Body() signup : Signup ){
+    public async addUser ( @Body() signup : Signup ){
         try{
-        const value : Signup = await signupSchema.validateAsync(signup);
-        console.log('value : ', value);
+            const value : Signup = await signupSchema.validateAsync(signup);
+            const registerUser = await this.userService.addUser(value);
+            return registerUser;
          } catch(err) {
              console.log(err)
          }
-        // console.log('error : ', error);
     }
 }

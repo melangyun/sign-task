@@ -18,7 +18,7 @@ password!: string;
 @Column({name:"is_active",type:"varchar", nullable:false, default: true})
 isActive!: string;
 
-@Column({type:"varchar", nullable:false})
+@Column({type:"varchar", nullable:true})
 refreshToken!: string;
 
 @OneToMany( type => Signature , signature => signature.user)

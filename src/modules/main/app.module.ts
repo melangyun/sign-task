@@ -6,8 +6,8 @@ import { UserModule } from '../user/user.module';
 import { SignatureModule } from "../Signature/signature.module";
 import { TeamModule } from "../team/team.module";
 import { Connection } from 'typeorm';
-import { ConfigModule } from '@nestjs/config';
-import * as Joi from '@hapi/joi';
+// import { ConfigModule } from '@nestjs/config';
+// import * as Joi from '@hapi/joi';
 
 @Module({
   imports: [
