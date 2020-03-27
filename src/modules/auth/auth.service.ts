@@ -1,5 +1,4 @@
 import { Injectable, Inject } from "@nestjs/common";
-// import { JwtService } from '@nestjs/jwt';
 import { sign } from "jsonwebtoken"
 import { UserService } from "../user/user.service";
 
@@ -7,7 +6,6 @@ import { UserService } from "../user/user.service";
 export class AuthService {
     constructor(
         @Inject("UserService") private readonly userService: UserService,
-        // @Inject("JwtService") private readonly jwtService : JwtService
         ){}
 
     async signPayload(payload:any){

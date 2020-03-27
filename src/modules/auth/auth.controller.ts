@@ -13,7 +13,7 @@ export class AuthController{
     ){}
 
     @Get()
-    @UseGuards(AuthGuard("jwt"))
+    @UseGuards(AuthGuard('jwt'))
     tempAuth(){
         return { auth : "works" };
     }
