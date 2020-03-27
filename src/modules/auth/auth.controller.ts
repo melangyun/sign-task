@@ -4,6 +4,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { UserService } from "../user/user.service";
 import { RegisterDTO , LoginDTO } from "./auth.dto";
 import { User } from "../user/user.entity";
+import { Payload } from "./payload.type";
 
 @Controller("auth")
 export class AuthController{
@@ -19,7 +20,8 @@ export class AuthController{
     }
 
     @Post("login")
-    async login(@Body() userDTO: LoginDTO): Promise<{payload:object , token:string}>{
+    async login(@Body() userDTO: LoginDTO): Promise<{payload:Payload , token:string}>{
+        //const value : Signup = await signupSchema.validateAsync(signup);
         const user : User = await this.userService.findByLogin(userDTO);
         const payload = {
             id : user.id,
@@ -31,7 +33,7 @@ export class AuthController{
     }
 
     @Post("register")
-    async register( @Body() userDTO : RegisterDTO): Promise<{id:string, nickname:string}>{
+    async register( @Body() userDTO : RegisterDTO): Promise<Payload>{
         const user:User =  await this.userService.create(userDTO)
         return { id: user.id, nickname: user.nickname };
     }

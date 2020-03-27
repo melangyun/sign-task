@@ -4,6 +4,7 @@ import { User } from "./user.entity";
 import { Repository } from "typeorm";
 import { RegisterDTO , LoginDTO } from "../auth/auth.dto";
 import * as bcrypt from "bcrypt";
+import { Payload } from "../auth/payload.type";
 
 @Injectable()
 export class UserService {
@@ -46,7 +47,7 @@ export class UserService {
         throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
     }
 
-    async findByPayload(payload : any){
+    async findByPayload(payload : Payload){
         const { id } = payload;
         return await this.userRepository.findOne({id});
     }
