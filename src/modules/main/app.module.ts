@@ -20,7 +20,6 @@ import { ConfigModule } from '@nestjs/config';
   ],
   controllers: [AppController],
   providers: [AppService],
-  // exports : [ConfigModule]
 })
 export class AppModule {
   constructor(private connection: Connection) {}
