@@ -13,12 +13,12 @@ export class UserService {
         private userRepository : Repository<User>,
     ){}
     
-    private sanitizeUser( user : User ){
-        const { password , refreshToken , ... result } = user;
-        return result;
+    private sanitizeUser( user : User ) : User {
+        delete user.password;
+        return user;
     }
 
-    async create(userDTO:RegisterDTO) {
+    async create(userDTO:RegisterDTO): Promise<User> {
         const { id } = userDTO;
         const user = await this.userRepository.findOne({id});
         if(user) {
@@ -29,7 +29,7 @@ export class UserService {
         return this.sanitizeUser(registerUser);
     }
 
-    async findByLogin(userDTO:LoginDTO) {
+    async findByLogin(userDTO:LoginDTO): Promise<User> {
         const { id, password } = userDTO;
         const user = await this.userRepository.findOne({id});
         if(!user){
@@ -43,5 +43,9 @@ export class UserService {
         throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
     }
 
+    async findByPayload(payload : any){
+        const { id } = payload;
+        return await this.userRepository.findOne({id});
+    }
 
 }
