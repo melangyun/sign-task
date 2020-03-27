@@ -1,6 +1,9 @@
-import { Module } from "@nestjs/common";
+import { Module, HttpException } from "@nestjs/common";
+import { APP_FILTER } from "@nestjs/core";
 
 @Module({
-    providers:[]
+    providers:[
+        {provide : APP_FILTER, useClass : HttpException}
+    ]
 })
 export class SharedModule{}

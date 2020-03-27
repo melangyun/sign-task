@@ -1,10 +1,20 @@
-export interface LoginDTO{
-    id: string;
-    password : string;
+import { ApiProperty } from '@nestjs/swagger';
+
+export class LoginDTO{
+    @ApiProperty()
+    readonly id: string;
+
+    @ApiProperty()
+    readonly password : string;
 }
 
-export interface RegisterDTO{
-    id: string;
-    password: string;
-    nickname : string;  
+export class RegisterDTO{
+    @ApiProperty()
+    readonly id: string;
+
+    @ApiProperty()
+    readonly password: string;
+
+    @ApiProperty()
+    readonly nickname : string;  
 }

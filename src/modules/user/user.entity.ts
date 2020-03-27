@@ -2,7 +2,6 @@ import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert } from 'typeorm'
 import { Signature } from "../Signature/signature.entity";
 import { Team } from "../team/team.entity";
 import { TeamUser } from "../team/teamuser.entity";
-import * as bcryt from "bcrypt";
 
 @Entity()
 export class User {
@@ -30,10 +29,5 @@ teams!: Team[];
 
 @OneToMany( type => TeamUser , teamUser => teamUser.user)
 teamUsers!: TeamUser[];
-
-@BeforeInsert()
-async hashPassword(){
-    this.password = await bcryt.hash(this.password, 10);
-}
 
 }

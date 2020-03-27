@@ -10,7 +10,7 @@ export class AuthService {
         // @Inject("JwtService") private readonly jwtService : JwtService
         ){}
 
-    async singPayload(payload:any){
+    async signPayload(payload:any){
         const secret:string = process.env.JWT_SECRET_ACCESS;
         return sign ( payload, secret, {expiresIn: "1d"} );
     }
