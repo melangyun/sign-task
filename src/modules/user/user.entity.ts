@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import { Signature } from "../Signature/signature.entity";
 import { Team } from "../team/team.entity";
 import { TeamUser } from "../team/teamuser.entity";
@@ -15,13 +15,10 @@ nickname!: string;
 @Column({type:"varchar", nullable:false})
 password!: string;
 
-@Column({type:"varchar", nullable:false})
-salt!: string;
-
 @Column({name:"is_active",type:"varchar", nullable:false, default: true})
 isActive!: string;
 
-@Column({type:"varchar", nullable:false})
+@Column({type:"varchar", nullable:true})
 refreshToken!: string;
 
 @OneToMany( type => Signature , signature => signature.user)
