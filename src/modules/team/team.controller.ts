@@ -1,7 +1,7 @@
 import { Controller, Post, UseGuards, Body, Delete, Get, Param, HttpException, HttpStatus, Request, Patch } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { AuthGuard } from "@nestjs/passport";
-import { CreateTeamDTO, DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
 import { AuthUser } from "src/utilities/user.decorator";
 import {ApiBearerAuth, ApiTags, ApiResponse } from "@nestjs/swagger";
 import { LeaderGuard } from "../../guards/leader.guard";
@@ -52,16 +52,21 @@ export class TeamController{
     @Post("/user")
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "User add success"})
-    async addUser(@Body() addUserDTO : AddUserDTO){
+    async addUser(@Body() addUserDTO : TeamUserDTO){
         await this.teamService.addUser(addUserDTO);
         return {};
     }
-
 
     @Patch("/user")
     @UseGuards(LeaderGuard)
     async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO){
         await this.teamService.modifyPermissions(modifyPermissionDTO);
+    }
+
+    @Delete("/user")
+    @UseGuards(LeaderGuard)
+    async deleteUser(@Body() deleteUserDTO : TeamUserDTO){
+        await this.teamService.deleteUser(deleteUserDTO);
     }
 
 }

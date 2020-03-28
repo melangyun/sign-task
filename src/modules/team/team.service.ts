@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
-import { Repository, UpdateResult } from "typeorm";
+import { Repository, UpdateResult, DeleteResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
-import { DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
 
@@ -40,7 +40,7 @@ export class TeamService{
         return result.raw.message;
     }
 
-    async addUser(addUserDTO : AddUserDTO):Promise<void> {
+    async addUser(addUserDTO : TeamUserDTO):Promise<void> {
         const { teamId, memberId } = addUserDTO;
         
         const member:User = await this.userService.findById(memberId);
@@ -78,7 +78,7 @@ export class TeamService{
     async findAllmyTeam(id: string):Promise<Array<Team>> {
         return await this.teamRepository.find({
             select : ["id", "name", "leader"],
-            where: { leader : id}
+            where: { leader : id , isActive : true }
         });
     }
 
@@ -87,7 +87,7 @@ export class TeamService{
             .select(["team.id", "team.name", "team.leader"])
             .where("team.is_active = :status", {status : true})
             .leftJoin("team.teamUsers", "teamUser")
-            .where("teamUser.userId = :id",{id})
+            .andWhere("teamUser.userId = :id",{id})
             .getMany();
 
     }
@@ -95,9 +95,21 @@ export class TeamService{
     async getUsers(id:number):Promise<Array<object>>{
         return await this.teamUserRepository.createQueryBuilder("team_user")
             .select(["team_user.auth","user.id" , "user.nickname"])
-            .where("team_user.userId = :id", { id })
+            .where("team_user.teamId = :id", { id })
             .leftJoin("team_user.user", "user")
-            .where("user.is_active = :status", {status : true})
+            .andWhere("user.is_active = :status", {status : true})
             .getMany();
+    }
+
+    async deleteUser(deleteUserDTO : TeamUserDTO){
+        const { teamId, memberId } = deleteUserDTO;
+
+        const user = new User();
+        user.id = memberId;
+        const team = new Team()
+        team.id = teamId;
+        
+        await this.teamUserRepository.delete({user, team});
+        
     }
 }
