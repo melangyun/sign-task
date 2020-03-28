@@ -5,7 +5,7 @@ import { app } from './constants';
 
 describe('AUTH', () => {
 
-  const user: RegisterDTO = { id : "testuser", nickname:"test01", password : "1234"}
+  const user: RegisterDTO = { id : "testuser", nickname:"test01", password : "1234"};
   
   it('should register', () => {
     return request(app)
