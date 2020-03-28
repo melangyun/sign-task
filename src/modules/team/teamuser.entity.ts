@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, Column, JoinColumn } from "typeorm";
+import { Entity, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Team } from "./team.entity";
 import { User } from "../user/user.entity";
 
@@ -12,5 +12,11 @@ export class TeamUser{
 
     @Column({ type:"simple-json", nullable: false, default:'{"lookup":false,"add":false,"delete":false}'})
     auth!: {"lookup":boolean,"add":boolean,"delete":boolean};
+
+    @CreateDateColumn({ name: "create_at" })
+    createAt! : Date;
+
+    @UpdateDateColumn({ name: "update_at" })
+    updateAt! : Date;
 
 }
