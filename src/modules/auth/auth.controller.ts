@@ -4,7 +4,7 @@ import { UserService } from "../user/user.service";
 import { RegisterDTO , LoginDTO } from "./auth.dto";
 import { User } from "../user/user.entity";
 import { Payload } from "./payload.type";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiResponse, ApiBody } from "@nestjs/swagger";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -15,6 +15,8 @@ export class AuthController{
     ){}
 
     @Post("login")
+    @ApiResponse({status:201, description: "login success"})
+    @ApiResponse({status:401, description : "Invalid credentails"})
     async login(@Body() userDTO: LoginDTO): Promise<{payload:Payload , token:string}>{
         //const value : Signup = await signupSchema.validateAsync(signup);
         const user : User = await this.userService.findByLogin(userDTO);
@@ -28,6 +30,8 @@ export class AuthController{
     }
 
     @Post("register")
+    @ApiResponse({status:201, description: "register success"})
+    @ApiResponse({status:400, description : "User already exists"})
     async register( @Body() userDTO : RegisterDTO): Promise<Payload>{
         const user:User =  await this.userService.create(userDTO)
         return { id: user.id, nickname: user.nickname };

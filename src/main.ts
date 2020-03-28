@@ -6,7 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
-    .setTitle("example")
+    .addBearerAuth()
+    .setTitle("Sign shared program")
     .setDescription("example description")
     .setVersion("1.0")
     .build();

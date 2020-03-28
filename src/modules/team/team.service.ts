@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
 import { Repository, UpdateResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
-import { CreateTeamDTO, DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
 
 @Injectable()
@@ -51,8 +51,7 @@ export class TeamService{
         teamUesr.team = team;
         teamUesr.user = addUser;
     
-        const result = await this.teamUserRepository.save(teamUesr);
-        console.log('result :',result);
+        await this.teamUserRepository.save(teamUesr);
     }
 
     async modifyPermissions(modifyPermissionDTO : ModifyPermissionDTO){
