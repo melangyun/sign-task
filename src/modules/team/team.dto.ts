@@ -13,3 +13,11 @@ export class DeleteTeamDTO{
     readonly teamId : number;
 }
 
+export class AddUserDTO{
+    @ApiProperty()
+    readonly teamId : number;
+
+    @ApiProperty()
+    readonly memberId : string;
+}
+

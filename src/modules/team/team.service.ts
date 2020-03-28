@@ -39,4 +39,26 @@ export class TeamService{
 
         return result.raw.message;
     }
+
+    async findbyId( id : number) : Promise<Team>{
+        const team:Team = await this.teamRepository.findOne({id});
+        console.log(team);
+        if(!team || !team.isActive ){
+            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+        }
+
+        return team;
+    }
+
+    async addUser(memberId: string, team:Team):Promise<void> {
+        const addUser = new User();
+        addUser.id = memberId;
+
+        const teamUesr = new TeamUser();
+        teamUesr.team = team;
+        teamUesr.user = addUser;
+    
+        const result = await this.teamUserRepository.save(teamUesr);
+        console.log(result);
+    }
 }
