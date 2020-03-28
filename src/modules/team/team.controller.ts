@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Body, Delete, Get } from "@nestjs/common";
+import { Controller, Post, UseGuards, Body, Delete, Get, Param } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { AuthGuard } from "@nestjs/passport";
 import { CreateTeamDTO, DeleteTeamDTO } from "./team.dto";
@@ -6,6 +6,7 @@ import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
 
 @Controller("team")
+@UseGuards(AuthGuard('jwt'))
 export class TeamController{
     constructor(
         private readonly teamService : TeamService,
@@ -13,7 +14,6 @@ export class TeamController{
         ){}
 
     @Post()
-    @UseGuards(AuthGuard('jwt'))
     async createTeam(@Body() createTeamDTO: CreateTeamDTO){
         const teamId:number = await this.teamService.create(createTeamDTO);
         const user:User = await this.userService.findById(createTeamDTO.id);
