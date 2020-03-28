@@ -1,10 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
-import { Repository } from "typeorm";
+import { Repository, Like } from "typeorm";
 import { RegisterDTO , LoginDTO } from "../auth/auth.dto";
 import * as bcrypt from "bcrypt";
-import { Payload } from "../auth/payload.type";
 
 @Injectable()
 export class UserService {
@@ -47,9 +46,18 @@ export class UserService {
         throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
     }
 
-    async findByPayload(payload : Payload){
-        const { id } = payload;
+    async findById(id : string):Promise<User>{;
         return await this.userRepository.findOne({id});
+    }
+
+    async serchUser(search:string):Promise<Array<User>>{
+        const searchKey = `%${search}%`;
+        return await this.userRepository.find({
+            select : ["id", "nickname"] ,
+            where : [
+                { id : Like (searchKey)},
+                { nickname : Like (searchKey)}
+        ]});
     }
 
 }

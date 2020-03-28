@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from "../user/user.entity"
 
 @Entity()
@@ -15,5 +15,11 @@ isActive!: boolean;
 
 @ManyToOne( type => User, user => user.signatures )
 user!: User;
+
+@CreateDateColumn({ name: "create_at" })
+createAt! : Date;
+
+@UpdateDateColumn({ name: "update_at" })
+updateAt! : Date;
 
 }

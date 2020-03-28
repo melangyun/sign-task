@@ -1,12 +1,12 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from "../user/user.entity";
 import { TeamUser } from "./teamuser.entity";
 
 @Entity()
 export class Team {
 
-    @PrimaryColumn({type:"varchar"})
-    id!: string;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
     @Column({type:"varchar", nullable:false})
     name!: string;
@@ -22,5 +22,11 @@ export class Team {
 
     @OneToMany(type => TeamUser, teamUser => teamUser.team)
     teamUsers!: TeamUser[];
+
+    @CreateDateColumn({ name: "create_at" })
+    createAt! : Date;
+
+    @UpdateDateColumn({ name: "update_at" })
+    updateAt! : Date;
 }
 
