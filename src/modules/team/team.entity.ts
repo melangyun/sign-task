@@ -1,12 +1,12 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from "../user/user.entity";
 import { TeamUser } from "./teamuser.entity";
 
 @Entity()
 export class Team {
 
-    @PrimaryColumn({type:"varchar"})
-    id!: string;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
     @Column({type:"varchar", nullable:false})
     name!: string;

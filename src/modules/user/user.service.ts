@@ -47,8 +47,7 @@ export class UserService {
         throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
     }
 
-    async findByPayload(payload : Payload){
-        const { id } = payload;
+    async findById(id : string):Promise<User>{;
         return await this.userRepository.findOne({id});
     }
 
