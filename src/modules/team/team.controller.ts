@@ -22,7 +22,8 @@ export class TeamController{
 
     @Delete()
     async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO){
-        const result:any = await this.teamService.deleteTeam(deleteTeamDTO);
+        const result:string = await this.teamService.deleteTeam(deleteTeamDTO);
+        return { result };
     }
     
 

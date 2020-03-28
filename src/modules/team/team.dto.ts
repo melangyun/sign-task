@@ -10,6 +10,6 @@ export class CreateTeamDTO{
 
 export class DeleteTeamDTO{
     @ApiProperty()
-    readonly teamId : string;
+    readonly teamId : number;
 }
 

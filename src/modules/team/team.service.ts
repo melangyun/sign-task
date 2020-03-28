@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
-import { Repository, InsertResult } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
 import { CreateTeamDTO, DeleteTeamDTO } from "./team.dto";
 import { User } from "../user/user.entity";
@@ -30,7 +30,13 @@ export class TeamService{
         return registedTeam.id;
     }
     
-    async deleteTeam(deleteTeamDTo : DeleteTeamDTO): any {
-        // const result = await this.teamRepository.update() 
+    async deleteTeam(deleteTeamDTo : DeleteTeamDTO): Promise<string> {
+        const { teamId } = deleteTeamDTo;
+        const result:UpdateResult = await this.teamRepository.update(teamId , {isActive : false}) ;
+        if (!result.raw.changedRows) {
+            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+        }
+
+        return result.raw.message;
     }
 }

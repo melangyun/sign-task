@@ -4,7 +4,6 @@ import { User } from "./user.entity";
 import { Repository } from "typeorm";
 import { RegisterDTO , LoginDTO } from "../auth/auth.dto";
 import * as bcrypt from "bcrypt";
-import { Payload } from "../auth/payload.type";
 
 @Injectable()
 export class UserService {
