@@ -32,7 +32,7 @@ describe('TEAM', () => {
     it('should add Team', () => {
         return request(app)
             .post("/team")
-            .set("Authorization", `Bearer &${loginToken}`)
+            .set("Authorization", `Bearer ${loginToken}`)
             .set("Accept", "application/json")
             .send(team)
             .expect(({body}) => {

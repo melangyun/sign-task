@@ -1,20 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDTO{
-    @ApiProperty()
+    @ApiProperty({
+        description : "User ID",
+        default : "userId",
+        type: String,
+    })
     readonly id: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description : "User PW",
+        default : "password",
+        type: String,
+    })
     readonly password : string;
 }
 
 export class RegisterDTO{
-    @ApiProperty()
+    @ApiProperty({
+        description : "The ID you want (unique)",
+        type: String,
+    })
     readonly id: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description : "The PW you want",
+        default: "password",
+        type: String,
+    })
     readonly password: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description : "The nickname you want",
+        default : "swaggerUser",
+        type: String,
+    })
     readonly nickname : string;  
 }

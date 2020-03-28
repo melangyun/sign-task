@@ -5,12 +5,14 @@ import { CreateTeamDTO, DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from ".
 import { UserService } from "../user/user.service";
 import { Payload } from "../auth/payload.type";
 import { AuthUser } from "src/utilities/user.decorator";
-import { ApiHeader } from "@nestjs/swagger";
+import { ApiHeader, ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiTags("team")
 @ApiHeader({
     name: 'Authorization',
     description: '`Bearer ${Token}`',
   })
+@ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller("team")
 export class TeamController{
