@@ -62,4 +62,8 @@ export class TeamService{
         const reulst = await this.teamUserRepository.update(teamId, { auth , user })
         console.log("reulst : ",reulst);
     }
+
+    async findTeamByTeamId( id:number ): Promise<Team> {
+        return await this.teamRepository.findOne({id});
+    }
 }

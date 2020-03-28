@@ -6,6 +6,8 @@ import { UserService } from "../user/user.service";
 import { Payload } from "../auth/payload.type";
 import { AuthUser } from "src/utilities/user.decorator";
 import {ApiBearerAuth, ApiTags, ApiResponse } from "@nestjs/swagger";
+import { LeaderGuard } from "../../guards/leader.guard";
+
 
 @ApiTags("team")
 @ApiBearerAuth()
@@ -25,6 +27,7 @@ export class TeamController{
     }
 
     @Delete()
+    @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Team delete success"})
     async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO){
         const result:string = await this.teamService.deleteTeam(deleteTeamDTO);
@@ -32,6 +35,7 @@ export class TeamController{
     }
     
     @Post("/user")
+    @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "User add success"})
     async addUser(@Body() addUserDTO : AddUserDTO){
         await this.teamService.addUser(addUserDTO);
@@ -39,6 +43,7 @@ export class TeamController{
     }
 
     @Patch("/user")
+    @UseGuards(LeaderGuard)
     async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO){
         await this.teamService.modifyPermissions(modifyPermissionDTO);
     }

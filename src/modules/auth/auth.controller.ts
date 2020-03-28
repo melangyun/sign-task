@@ -4,7 +4,7 @@ import { UserService } from "../user/user.service";
 import { RegisterDTO , LoginDTO } from "./auth.dto";
 import { User } from "../user/user.entity";
 import { Payload } from "./payload.type";
-import { ApiTags, ApiResponse, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiResponse } from "@nestjs/swagger";
 
 @ApiTags("auth")
 @Controller("auth")
