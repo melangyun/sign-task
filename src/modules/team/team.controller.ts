@@ -18,9 +18,10 @@ export class TeamController{
     constructor(
         private readonly teamService : TeamService,
         ){}
+
     
     @Get()
-    async getMyTeamList(@AuthUser() authUser:User){
+    async getMyTeamList(@AuthUser() authUser:User):Promise<{teamsByLeader:Team[], teamsByMember:Team[]}>{
         const { id } = authUser;
         const teamsByLeader:Array<Team> = await this.teamService.findAllmyTeam(id);
         const teamsByMember:Array<Team> = await this.teamService.findAllJoinTeam(id);
@@ -38,11 +39,16 @@ export class TeamController{
     @Delete()
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Team delete success"})
-    async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO){
+    async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO):Promise<{result:string}>{
         const result:string = await this.teamService.deleteTeam(deleteTeamDTO);
         return { result };
     }
     
+    @Get("/user/:teamId")
+    async getUsers(@Param("teamId") teamId: number ):Promise<Array<object>>{
+        return await this.teamService.getUsers(teamId);
+    }
+
     @Post("/user")
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "User add success"})
@@ -50,6 +56,7 @@ export class TeamController{
         await this.teamService.addUser(addUserDTO);
         return {};
     }
+
 
     @Patch("/user")
     @UseGuards(LeaderGuard)

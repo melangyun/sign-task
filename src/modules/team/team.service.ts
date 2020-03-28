@@ -91,4 +91,13 @@ export class TeamService{
             .getMany();
 
     }
+
+    async getUsers(id:number):Promise<Array<object>>{
+        return await this.teamUserRepository.createQueryBuilder("team_user")
+            .select(["team_user.auth","user.id" , "user.nickname"])
+            .where("team_user.userId = :id", { id })
+            .leftJoin("team_user.user", "user")
+            .where("user.is_active = :status", {status : true})
+            .getMany();
+    }
 }
