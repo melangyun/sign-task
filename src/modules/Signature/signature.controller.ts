@@ -1,6 +1,6 @@
 import { Controller, UseGuards, Post, Body, Delete, Get, Param } from "@nestjs/common";
 import { SignatureService } from "./signature.service";
-import { ApiBearerAuth, ApiTags,  } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags, ApiResponse,  } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthUser } from "src/utilities/user.decorator";
 import { SignDTO, DeleteSignDTO } from "./signature.dto";
@@ -17,12 +17,18 @@ export class SignatureController{
     constructor(private readonly signatureService : SignatureService){}
 
     @Post()
-    async addSignature( @Body() signDTO:SignDTO, @AuthUser() authUser:User):Promise<Signature>{
+    @ApiResponse({status:200, description:"Successfully adding Signature"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    async addSignature( @Body() signDTO:SignDTO, @AuthUser() authUser:User):Promise<object>{
         //서명 등록
-        return await this.signatureService.create(signDTO, authUser.id);
+        const signId:string = await this.signatureService.create(signDTO, authUser.id);
+        return { registeredId : signId };
     }
 
-    @Get("/:sign")
+    @Get("/:signId")
+    @ApiResponse({status:200, description:"Successfully get Signature"})
+    @ApiResponse({status:400, description:"Invalid signature key"})
+    @ApiResponse({status:406, description:"No Access for the signature"})
     async getSignatures(@Param("signId") signId:string):Promise<Signature>{
         // 서명 아이디로 서명 반환
         return await this.signatureService.findBySignId(signId);

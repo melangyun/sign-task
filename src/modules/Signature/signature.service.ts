@@ -6,6 +6,7 @@ import { SignDTO, DeleteSignDTO } from "./signature.dto";
 import { Team } from "../team/team.entity";
 import { User } from "../user/user.entity";
 import { TeamService } from "../team/team.service";
+import { TeamUser } from "../team/teamuser.entity";
 
 @Injectable()
 export class SignatureService {
@@ -15,16 +16,17 @@ export class SignatureService {
         private teamService : TeamService
     ){}
     
-    // 권환 확인
+    // 권한 확인
     private async validateUserAuth (teamId:number, userId:string, inquiry:string):Promise<void>{
-        const { auth } = await this.teamService.getTeamUser(teamId, userId);
-        if ( !auth[inquiry] ){
+        const teamUser:TeamUser = await this.teamService.getTeamUser(teamId, userId);
+    
+        if ( !teamUser || ( teamUser && !teamUser.auth[inquiry]) ){
             throw new HttpException('Unvalid access', HttpStatus.NOT_ACCEPTABLE );
         }
     }
 
     // 등록
-    async create( signDTO:SignDTO, userId:string ):Promise<Signature> {
+    async create( signDTO:SignDTO, userId:string ):Promise<string> {
         const { teamId, url, desc } = signDTO;
         
         const team = new Team();
@@ -44,19 +46,22 @@ export class SignatureService {
         sign.url = url;
         sign.desc = desc;
 
-        return await this.signatureRepository.save(sign);
+        const registeredSign:Signature =  await this.signatureRepository.save(sign);
+        return registeredSign.id;
     }
 
     // 서명 아이디로 서명 정보 가져오기
     async findBySignId(id : string ):Promise<Signature>{
         const sign:Signature =  await this.signatureRepository.findOne( { id, isActive:true } );
-        console.log("sign : ",sign)
+        if( !sign ){
+            throw new HttpException('Invalid signature key', HttpStatus.BAD_REQUEST );
+        }
         if( sign.team ){ 
             await this.validateUserAuth(sign.team.id , id, "lookup" );
         }
         return sign;
     }
-
+// 526d03cc-3c41-4ce9-8982-d9174c092225
     // 서명 아이디로 서명 삭제
     async delete(deletesignDTO :DeleteSignDTO, userId : string){
         const { signatureId } = deletesignDTO;

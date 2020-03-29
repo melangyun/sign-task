@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class SignDTO{
     @ApiProperty({
         description : "Team ID",
-        type: String,
+        type: Number,
         nullable:true
     })
     readonly teamId: number;

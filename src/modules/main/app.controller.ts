@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseInterceptors, UploadedFile, Delete, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, Delete, UseGuards, Body, HttpStatus, HttpException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiFile } from 'src/utilities/apiFile.decorator';
@@ -26,18 +26,29 @@ export class AppController {
   @UseInterceptors(FileInterceptor("file", multerOptions))
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({status:201, description:"Photo upload Success"})
+  @ApiResponse({status:400, description:"Unsupported file type"})
   uploadFile( @UploadedFile() file ){
       // 파일 업로드, 사진 Path전송
-      return file.path; 
+      const { filename } = file;
+      return { filename }; 
   }
 
   @ApiTags("file")
   @Delete("/file")
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({status:200, description:"Photo delete Success"})
+  @ApiResponse({status:400, description:"Not exist file"})
   async seeUploadedFile(@Body()body:DeleteFileDTO){
     // 전송받은 사진 삭제
-      return await fs.unlinkSync(body.filepath);
+    try {
+      fs.unlinkSync(`uploads/${body.filename}`)
+      return "dcelete File Success";
+    } catch(e){
+      throw new HttpException("File not exist", HttpStatus.BAD_REQUEST);
+    }
+      
   }
   
 }
