@@ -18,7 +18,7 @@ export class SignatureService {
     }
 
     // 등록
-    async create( signDTO:SignDTO, userId:string ){
+    async create( signDTO:SignDTO, userId:string ):Promise<Signature>{
         const { teamId, url, desc } = signDTO;
 
         const team = new Team();
@@ -40,12 +40,14 @@ export class SignatureService {
         return await this.signatureRepository.save(sign);
     }
 
-    async findAll(){
-
+    async findBySignId(id : string ):Promise<Signature>{
+        return await this.signatureRepository.findOne( { id, isActive:true } );
     }
 
     // 삭제
     async delete(deletesignDTO :DeleteSignDTO){
+        const { signatureId } = deletesignDTO;
+        await this. signatureRepository.update( signatureId, {isActive : false} );
     }
 
 }

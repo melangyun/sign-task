@@ -1,10 +1,11 @@
-import { Controller, UseGuards, Post, Body, Delete, Get } from "@nestjs/common";
+import { Controller, UseGuards, Post, Body, Delete, Get, Param } from "@nestjs/common";
 import { SignatureService } from "./signature.service";
 import { ApiBearerAuth, ApiTags,  } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthUser } from "src/utilities/user.decorator";
 import { SignDTO, DeleteSignDTO } from "./signature.dto";
 import { User } from "../user/user.entity";
+import { Signature } from "./signature.entity";
 
 
 
@@ -16,14 +17,14 @@ export class SignatureController{
     constructor(private readonly signatureService : SignatureService){}
 
     @Post()
-    async addSignature( @Body() signDTO:SignDTO, @AuthUser() authUser:User){
+    async addSignature( @Body() signDTO:SignDTO, @AuthUser() authUser:User):Promise<Signature>{
         //서명 등록
-        await this.signatureService.create(signDTO, authUser.id);
+        return await this.signatureService.create(signDTO, authUser.id);
     }
 
     @Get("/:sign")
-    async getSignatures(){
-        await this.signatureService.findAll();
+    async getSignatures(@Param("signId") signId:string):Promise<Signature>{
+        return await this.signatureService.findBySignId(signId);
     }
 
     @Delete()

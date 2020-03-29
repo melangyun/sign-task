@@ -1,6 +1,5 @@
 import * as Joi from '@hapi/joi';
 
-
 export const loginSchema = {
     id : Joi.string().required(),
     password: Joi.string().required()
