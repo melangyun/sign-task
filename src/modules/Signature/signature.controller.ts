@@ -31,7 +31,7 @@ export class SignatureController{
     @Delete()
     async deleteSignature(@Body() deletesignDTO :DeleteSignDTO, @AuthUser() authUser:User){
         // 서명 삭제
-        return await this.signatureService.delete(deletesignDTO);
+        return await this.signatureService.delete(deletesignDTO, authUser.id );
     }
 
     @Get("user/")
@@ -40,7 +40,7 @@ export class SignatureController{
     }
 
     @Get("team/:teamId")
-    async geTeamSigns(@Param("teamId") teamId:string ,@AuthUser() authUser:User):Promise<Signature[]>{
+    async geTeamSigns(@Param("teamId") teamId:number ,@AuthUser() authUser:User):Promise<Signature[]>{
         return await this.signatureService.geTeamSigns( teamId, authUser.id );
     }
 }

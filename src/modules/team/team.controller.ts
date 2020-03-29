@@ -81,4 +81,10 @@ export class TeamController{
         await this.teamService.deleteUser(deleteUserDTO);
     }
 
+    @Get("/user/auth")
+    async getMyAuth(@Param("teamId") teamId: number, @AuthUser() authUser: User ):Promise<TeamUser>{
+        // 내 권한 조회
+        return await this.teamService.getTeamUser(teamId, authUser.id);
+    }
+
 }

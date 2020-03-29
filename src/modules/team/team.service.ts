@@ -127,7 +127,15 @@ export class TeamService{
         const team = new Team()
         team.id = teamId;
         
-        await this.teamUserRepository.delete({user, team});
-        
+        await this.teamUserRepository.delete({user, team});   
+    }
+
+    async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
+        const user = new User();
+        user.id = userId;
+        const team = new Team();
+        team.id = teamId;
+
+        return await this.teamUserRepository.findOne({user , team});
     }
 }
