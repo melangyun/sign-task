@@ -24,12 +24,23 @@ export class SignatureController{
 
     @Get("/:sign")
     async getSignatures(@Param("signId") signId:string):Promise<Signature>{
+        // 서명 아이디로 서명 반환
         return await this.signatureService.findBySignId(signId);
     }
 
     @Delete()
     async deleteSignature(@Body() deletesignDTO :DeleteSignDTO, @AuthUser() authUser:User){
         // 서명 삭제
+        return await this.signatureService.delete(deletesignDTO);
     }
 
+    @Get("user/")
+    async getUserSigns(@AuthUser() authUser:User):Promise<Signature[]>{
+        return await this.signatureService.getUserSigns(authUser.id);
+    }
+
+    @Get("team/:teamId")
+    async geTeamSigns(@Param("teamId") teamId:string ,@AuthUser() authUser:User):Promise<Signature[]>{
+        return await this.signatureService.geTeamSigns( teamId, authUser.id );
+    }
 }

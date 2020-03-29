@@ -40,14 +40,36 @@ export class SignatureService {
         return await this.signatureRepository.save(sign);
     }
 
+    // 서명 아이디로 서명 정보 가져오기
     async findBySignId(id : string ):Promise<Signature>{
         return await this.signatureRepository.findOne( { id, isActive:true } );
     }
 
-    // 삭제
+    // 서명 아이디로 서명 삭제
     async delete(deletesignDTO :DeleteSignDTO){
         const { signatureId } = deletesignDTO;
-        await this. signatureRepository.update( signatureId, {isActive : false} );
+        return await this. signatureRepository.update( signatureId, {isActive : false} );
+    }
+
+    // 서명 가져오는 method
+    private async getSigns(userId:string, teamId:number|null):Promise<Signature[]>{
+        const user = new User();
+        user.id = userId;
+
+        const team = new Team();
+        team.id = teamId;
+
+        return await this.signatureRepository.find( { user, isActive:true, team});
+    }
+
+    // 유저 서명 반환
+    async getUserSigns(id : string ):Promise<Signature[]>{
+        return await this.getSigns(id, null);
+    }
+
+    // 팀 서명 반환
+    async geTeamSigns(teamId : number ,userId : string):Promise<Signature[]>{
+        return await this.getSigns(userId, teamId);
     }
 
 }
