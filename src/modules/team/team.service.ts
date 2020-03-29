@@ -88,7 +88,7 @@ export class TeamService{
     }
 
     // 리더로서 참가하는 팀
-    async findAllmyTeam(id: string):Promise<Array<Team>> {
+    async findAllmyTeam(id: string):Promise<Team[]> {
         return await this.teamRepository.find({
             select : ["id", "name", "leader"],
             where: { leader : id , isActive : true }
@@ -96,7 +96,7 @@ export class TeamService{
     }
 
     // 참여자로서 참가하는 팀
-    async findAllJoinTeam(id: string):Promise<Array<Team>> {
+    async findAllJoinTeam(id: string):Promise<Team[]> {
         return await this.teamRepository.createQueryBuilder("team")
             .select(["team.id", "team.name", "team.leader"])
             .where("team.is_active = :status", {status : true})
@@ -107,7 +107,7 @@ export class TeamService{
     }
 
     // 팀 아이디를 받아 맴버 아이디, 닉네임, 권한을 돌려줌
-    async getUsers(id:number):Promise<Array<object>>{
+    async getUsers(id:number):Promise<TeamUser[]>{
         this.verifyTeam(id);
         return await this.teamUserRepository.createQueryBuilder("team_user")
             .select(["team_user.auth","user.id" , "user.nickname"])

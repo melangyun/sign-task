@@ -13,7 +13,7 @@ export class UserController{
 
     @Get("/:search")
     @ApiResponse({status:200, description: "return search list"})
-    async serchUser(@Param("search") search:string):Promise<Array<User>>{
+    async serchUser(@Param("search") search:string):Promise<User[]>{
         return await this.userService.serchUser(search);
     }
 

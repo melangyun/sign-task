@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiFile } from 'src/utilities/apiFile.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../Signature/multer.config';
+import { multerOptions } from './multer.config';
 import * as fs from "fs";
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteFileDTO } from "./app.dto";

@@ -7,6 +7,7 @@ import {ApiBearerAuth, ApiTags, ApiResponse } from "@nestjs/swagger";
 import { LeaderGuard } from "../../guards/leader.guard";
 import { User } from "../user/user.entity";
 import { Team } from "./team.entity";
+import { TeamUser } from "./teamuser.entity";
 
 
 @ApiTags("team")
@@ -24,8 +25,8 @@ export class TeamController{
     async getMyTeamList(@AuthUser() authUser:User):Promise<{teamsByLeader:Team[], teamsByMember:Team[]}>{
         // 내가 속한 팀 전체 조회
         const { id } = authUser;
-        const teamsByLeader:Array<Team> = await this.teamService.findAllmyTeam(id);
-        const teamsByMember:Array<Team> = await this.teamService.findAllJoinTeam(id);
+        const teamsByLeader:Team[] = await this.teamService.findAllmyTeam(id);
+        const teamsByMember:Team[] = await this.teamService.findAllJoinTeam(id);
         return { teamsByLeader, teamsByMember };
     }
     
@@ -50,7 +51,7 @@ export class TeamController{
     
     @Get("/user/:teamId")
     @ApiResponse({status:200, description: "Successfully called up team member list"})
-    async getUsers(@Param("teamId") teamId: number ):Promise<Array<object>>{
+    async getUsers(@Param("teamId") teamId: number ):Promise<TeamUser[]>{
         // 팀 맴버 조회
         return await this.teamService.getUsers(teamId);
     }
