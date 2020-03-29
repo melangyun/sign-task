@@ -8,10 +8,9 @@ import { TeamModule } from "../team/team.module";
 @Module({
     imports:[
         TypeOrmModule.forFeature([Signature]),
-        // TeamModule
+        TeamModule
     ],
     controllers:[SignatureController],
-    providers:[SignatureService],
-    exports:[TypeOrmModule]
+    providers:[SignatureService]
 })
 export class SignatureModule {}

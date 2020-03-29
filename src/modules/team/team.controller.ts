@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Body, Delete, Get, Param, HttpException, HttpStatus, Request, Patch } from "@nestjs/common";
+import { Controller, Post, UseGuards, Body, Delete, Get, Param, Patch } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { AuthGuard } from "@nestjs/passport";
 import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
@@ -36,13 +36,14 @@ export class TeamController{
     async createTeam(@Body() createTeamDTO: CreateTeamDTO, @AuthUser() authUser:User){
         // 팀생성
         const teamId:number = await this.teamService.create(createTeamDTO.name, authUser.id);
-        await this.teamService.addUser({teamId ,memberId : authUser.id});
+
         return { teamId, leader : authUser.nickname };
     }
 
     @Delete()
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Team delete success"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
     async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO):Promise<{result:string}>{
         // 팀 삭제
         const result:string = await this.teamService.deleteTeam(deleteTeamDTO);
@@ -51,6 +52,7 @@ export class TeamController{
     
     @Get("/user/:teamId")
     @ApiResponse({status:200, description: "Successfully called up team member list"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
     async getUsers(@Param("teamId") teamId: number ):Promise<TeamUser[]>{
         // 팀 맴버 조회
         return await this.teamService.getUsers(teamId);
@@ -60,6 +62,7 @@ export class TeamController{
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "User add success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
     async addUser(@Body() addUserDTO : TeamUserDTO){
         // 팀 맴버 추가
         await this.teamService.addUser(addUserDTO);
@@ -68,20 +71,28 @@ export class TeamController{
 
     @Patch("/user")
     @UseGuards(LeaderGuard)
-    @ApiResponse({status:400, description: "Invalid memberId"})
+    @ApiResponse({status:200, description: "Privilege modification succeeded"})
+    @ApiResponse({status:400, description: "Invalid memberId or member"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
     async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO){
         // 팀 맴버 권한 수정
         await this.teamService.modifyPermissions(modifyPermissionDTO);
+        return "Permission modification succeeded";
     }
 
     @Delete("/user")
     @UseGuards(LeaderGuard)
+    @ApiResponse({status:200, description: "Team member delete success"})
+    @ApiResponse({status:400, description: "Invalid memberId"})
+    @ApiResponse({status:406, description: "Unable to access deleted team."})
     async deleteUser(@Body() deleteUserDTO : TeamUserDTO){
         // 팀 맴버 삭제
         await this.teamService.deleteUser(deleteUserDTO);
+        return "Team member delete success";
     }
 
-    @Get("/user/auth")
+    @Get("/user/auth/:teamId")
+    @ApiResponse({status:200, description: "Privilege Lookup Successful"})
     async getMyAuth(@Param("teamId") teamId: number, @AuthUser() authUser: User ):Promise<TeamUser>{
         // 내 권한 조회
         return await this.teamService.getTeamUser(teamId, authUser.id);

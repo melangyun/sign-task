@@ -22,13 +22,13 @@ export class TeamUserDTO{
         description : "The ID of the team",
         type: Number,
     })
-    readonly teamId : number;
+    teamId : number;
 
     @ApiProperty({
         description : "User ID to add to the team",
         type: String,
     })
-    readonly memberId : string;
+    memberId : string;
 }
 
 export class ModifyPermissionDTO{

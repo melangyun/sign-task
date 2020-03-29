@@ -15,5 +15,6 @@ import { UserModule } from "../user/user.module";
     ],
     controllers : [TeamController],
     providers : [TeamService],
+    exports : [TeamService]
 })
 export class TeamModule {}

@@ -43,7 +43,16 @@ export class TeamService{
         team.user = user;
         
         const registedTeam: Team  =  await this.teamRepository.save(team);
-        return registedTeam.id;
+        team.id = registedTeam.id;
+
+        const teamUser = new TeamUser();
+        teamUser.auth = {"lookup" : true, "add" : true, "delete" : true };
+        teamUser.team = team;
+        teamUser.user = user;
+
+        await this.teamUserRepository.save(teamUser);
+
+        return team.id;
     }
     
     // 팀 삭제
@@ -60,7 +69,7 @@ export class TeamService{
     // 팀 - 유저 추가
     async addUser(addUserDTO : TeamUserDTO):Promise<void> {
         const { teamId, memberId } = addUserDTO;
-        this.userService.verifyUser(memberId);
+        await this.userService.verifyUser(memberId);
 
         const addUser = new User();
         addUser.id = memberId;
@@ -78,13 +87,18 @@ export class TeamService{
     // 유저 권한 수정
     async modifyPermissions(modifyPermissionDTO : ModifyPermissionDTO){
         const { teamId , memberId, auth } = modifyPermissionDTO;
-        this.userService.verifyUser(memberId);
+        await this.userService.verifyUser(memberId);
+
+        const team = new Team();
+        team.id = teamId;
 
         const user = new User();
         user.id = memberId;
 
-        const reulst = await this.teamUserRepository.update(teamId, { auth , user })
-        console.log("reulst : ",reulst);
+        const result:UpdateResult = await this.teamUserRepository.update({ team, user }, { auth })
+        if(!result.raw.changedRows){
+            throw new HttpException("Invalid teamMember", HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 리더로서 참가하는 팀
@@ -108,7 +122,7 @@ export class TeamService{
 
     // 팀 아이디를 받아 맴버 아이디, 닉네임, 권한을 돌려줌
     async getUsers(id:number):Promise<TeamUser[]>{
-        this.verifyTeam(id);
+        await this.verifyTeam(id);
         return await this.teamUserRepository.createQueryBuilder("team_user")
             .select(["team_user.auth","user.id" , "user.nickname"])
             .where("team_user.teamId = :id", { id })
@@ -120,7 +134,7 @@ export class TeamService{
     // 팀 맴버로서 유저 삭제
     async deleteUser(deleteUserDTO : TeamUserDTO){
         const { teamId, memberId } = deleteUserDTO;
-        this.userService.verifyUser(memberId);
+        await this.userService.verifyUser(memberId);
 
         const user = new User();
         user.id = memberId;
@@ -131,6 +145,9 @@ export class TeamService{
     }
 
     async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
+        await this.userService.verifyUser(userId);
+        await this.verifyTeam(teamId);
+
         const user = new User();
         user.id = userId;
         const team = new Team();
