@@ -1,10 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
-import { Repository, UpdateResult } from "typeorm";
+import { Repository, UpdateResult, DeleteResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
-import { DeleteTeamDTO, AddUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class TeamService{
@@ -12,9 +13,26 @@ export class TeamService{
         @InjectRepository(Team)
         private teamRepository : Repository<Team>,
         @InjectRepository(TeamUser)
-        private teamUserRepository : Repository<TeamUser>
+        private teamUserRepository : Repository<TeamUser>,
+        private readonly userService: UserService,
     ){}
-    
+
+    // 팀 확인 :  1. 팀 아이디 검사 2. 활성화 되어있는 팀인지 검사
+    async verifyTeam(teamId:number){
+        const team:Team = await this.teamRepository.findOne({id: teamId});
+
+        if( !team ){
+            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+        }
+
+        if( !team.isActive ){
+            throw new HttpException('Unable to access deleted team.', HttpStatus.NOT_ACCEPTABLE );
+          }
+
+        return team;
+    }
+
+    // 팀 생성
     async create(name:string, id:string): Promise<number> {
         const user = new User();
         user.id = id;
@@ -28,6 +46,7 @@ export class TeamService{
         return registedTeam.id;
     }
     
+    // 팀 삭제
     async deleteTeam(deleteTeamDTO : DeleteTeamDTO): Promise<string> {
         const { teamId } = deleteTeamDTO;
         const result:UpdateResult = await this.teamRepository.update(teamId , {isActive : false}) ;
@@ -38,9 +57,11 @@ export class TeamService{
         return result.raw.message;
     }
 
-    async addUser(addUserDTO : AddUserDTO):Promise<void> {
+    // 팀 - 유저 추가
+    async addUser(addUserDTO : TeamUserDTO):Promise<void> {
         const { teamId, memberId } = addUserDTO;
-        
+        this.userService.verifyUser(memberId);
+
         const addUser = new User();
         addUser.id = memberId;
 
@@ -54,12 +75,59 @@ export class TeamService{
         await this.teamUserRepository.save(teamUesr);
     }
 
+    // 유저 권한 수정
     async modifyPermissions(modifyPermissionDTO : ModifyPermissionDTO){
         const { teamId , memberId, auth } = modifyPermissionDTO;
+        this.userService.verifyUser(memberId);
+
         const user = new User();
         user.id = memberId;
 
         const reulst = await this.teamUserRepository.update(teamId, { auth , user })
         console.log("reulst : ",reulst);
+    }
+
+    // 리더로서 참가하는 팀
+    async findAllmyTeam(id: string):Promise<Array<Team>> {
+        return await this.teamRepository.find({
+            select : ["id", "name", "leader"],
+            where: { leader : id , isActive : true }
+        });
+    }
+
+    // 참여자로서 참가하는 팀
+    async findAllJoinTeam(id: string):Promise<Array<Team>> {
+        return await this.teamRepository.createQueryBuilder("team")
+            .select(["team.id", "team.name", "team.leader"])
+            .where("team.is_active = :status", {status : true})
+            .leftJoin("team.teamUsers", "teamUser")
+            .andWhere("teamUser.userId = :id",{id})
+            .getMany();
+
+    }
+
+    // 팀 아이디를 받아 맴버 아이디, 닉네임, 권한을 돌려줌
+    async getUsers(id:number):Promise<Array<object>>{
+        this.verifyTeam(id);
+        return await this.teamUserRepository.createQueryBuilder("team_user")
+            .select(["team_user.auth","user.id" , "user.nickname"])
+            .where("team_user.teamId = :id", { id })
+            .leftJoin("team_user.user", "user")
+            .andWhere("user.is_active = :status", {status : true})
+            .getMany();
+    }
+
+    // 팀 맴버로서 유저 삭제
+    async deleteUser(deleteUserDTO : TeamUserDTO){
+        const { teamId, memberId } = deleteUserDTO;
+        this.userService.verifyUser(memberId);
+
+        const user = new User();
+        user.id = memberId;
+        const team = new Team()
+        team.id = teamId;
+        
+        await this.teamUserRepository.delete({user, team});
+        
     }
 }

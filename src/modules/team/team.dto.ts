@@ -17,7 +17,7 @@ export class DeleteTeamDTO{
     readonly teamId : number;
 }
 
-export class AddUserDTO{
+export class TeamUserDTO{
     @ApiProperty({
         description : "The ID of the team",
         type: Number,
