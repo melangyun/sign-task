@@ -52,7 +52,7 @@ export class UserService {
     }
 
     // 검색어로 아이디, 닉네임 검색
-    async serchUser(search:string):Promise<Array<User>>{
+    async serchUser(search:string):Promise<User[]>{
         const searchKey = `%${search}%`;
         return await this.userRepository.find({
             select : ["id", "nickname"] ,

@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from "../user/user.entity";
 import { TeamUser } from "./teamuser.entity";
+import { Signature } from '../Signature/signature.entity';
 
 @Entity()
 export class Team {
@@ -22,6 +23,10 @@ export class Team {
 
     @OneToMany(type => TeamUser, teamUser => teamUser.team)
     teamUsers!: TeamUser[];
+
+    @OneToMany(type => Signature, signature => signature.team)
+    signatures!: Signature[];
+    
 
     @CreateDateColumn({ name: "create_at" })
     createAt! : Date;
