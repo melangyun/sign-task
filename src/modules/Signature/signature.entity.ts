@@ -4,11 +4,14 @@ import { User } from "../user/user.entity"
 @Entity()
 export class Signature {
 
-@PrimaryColumn({type : "varchar"})
+@PrimaryColumn("uuid")
 id!: string;
 
 @Column({type:"varchar", nullable:false})
 url!: string;
+
+@Column({type:"varchar", nullable:true})
+desc!: string;
 
 @Column({name : "is_active", type:"boolean", nullable:false, default:true})
 isActive!: boolean;

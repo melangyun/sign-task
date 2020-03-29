@@ -8,11 +8,15 @@ import { TeamModule } from "../team/team.module";
 import { Connection } from 'typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal:true}),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot(),
+    // MulterModule.register({
+    //   dest : "./uploads",
+    // }),
     UserModule,
     SignatureModule,
     TeamModule,
