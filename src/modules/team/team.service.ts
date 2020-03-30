@@ -153,6 +153,12 @@ export class TeamService{
         const team = new Team();
         team.id = teamId;
 
-        return await this.teamUserRepository.findOne({user , team});
+        const result:TeamUser = await this.teamUserRepository.findOne({user , team});
+        
+        if(!result){
+            throw new HttpException("Not on the team", HttpStatus.BAD_REQUEST);
+        }
+        
+        return result;
     }
 }

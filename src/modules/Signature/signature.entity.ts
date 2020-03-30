@@ -1,11 +1,11 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from "../user/user.entity"
 import { Team } from '../team/team.entity';
 
 @Entity()
 export class Signature {
 
-@PrimaryColumn("uuid")
+@PrimaryGeneratedColumn("uuid")
 id!: string;
 
 @Column({type:"varchar", nullable:false})

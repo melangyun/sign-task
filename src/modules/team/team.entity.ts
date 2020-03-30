@@ -26,7 +26,6 @@ export class Team {
 
     @OneToMany(type => Signature, signature => signature.team)
     signatures!: Signature[];
-    
 
     @CreateDateColumn({ name: "create_at" })
     createAt! : Date;

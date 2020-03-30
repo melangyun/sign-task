@@ -43,7 +43,7 @@ export class TeamController{
     @Delete()
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Team delete success"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async deleteTeam(@Body() deleteTeamDTO : DeleteTeamDTO):Promise<{result:string}>{
         // 팀 삭제
         const result:string = await this.teamService.deleteTeam(deleteTeamDTO);
@@ -52,7 +52,7 @@ export class TeamController{
     
     @Get("/user/:teamId")
     @ApiResponse({status:200, description: "Successfully called up team member list"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async getUsers(@Param("teamId") teamId: number ):Promise<TeamUser[]>{
         // 팀 맴버 조회
         return await this.teamService.getUsers(teamId);
@@ -62,7 +62,7 @@ export class TeamController{
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "User add success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async addUser(@Body() addUserDTO : TeamUserDTO){
         // 팀 맴버 추가
         await this.teamService.addUser(addUserDTO);
@@ -73,7 +73,7 @@ export class TeamController{
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Privilege modification succeeded"})
     @ApiResponse({status:400, description: "Invalid memberId or member"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO){
         // 팀 맴버 권한 수정
         await this.teamService.modifyPermissions(modifyPermissionDTO);
@@ -84,7 +84,7 @@ export class TeamController{
     @UseGuards(LeaderGuard)
     @ApiResponse({status:200, description: "Team member delete success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async deleteUser(@Body() deleteUserDTO : TeamUserDTO){
         // 팀 맴버 삭제
         await this.teamService.deleteUser(deleteUserDTO);
@@ -93,6 +93,8 @@ export class TeamController{
 
     @Get("/user/auth/:teamId")
     @ApiResponse({status:200, description: "Privilege Lookup Successful"})
+    @ApiResponse({status:400, description: "Invalid memberId"})
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async getMyAuth(@Param("teamId") teamId: number, @AuthUser() authUser: User ):Promise<TeamUser>{
         // 내 권한 조회
         return await this.teamService.getTeamUser(teamId, authUser.id);
