@@ -4,7 +4,7 @@ import { TestModule } from "./test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
 
-describe('user', () => {
+describe('USER', () => {
 
   let app:INestApplication;
   let accessToken:string;
@@ -50,7 +50,7 @@ describe('user', () => {
           .expect(HttpStatus.OK)
           .expect(({body}) => {
             expect(body).toContainEqual({ id : register.id , nickname : register.nickname })
-          })
+          });
       });
 
     // 토큰 없이는 받아오지 않음
@@ -60,7 +60,7 @@ describe('user', () => {
             .get(`/user/${rearchKey}`)
             .expect(HttpStatus.UNAUTHORIZED)
             .expect(({body}) => {
-            expect(body.message).toEqual("Unauthorized");
+              expect(body.message).toEqual("Unauthorized");
             })
         });
   });
