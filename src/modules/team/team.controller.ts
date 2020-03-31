@@ -2,7 +2,7 @@ import { Controller, Post, UseGuards, Body, Delete, Get, Param, Patch } from "@n
 import { TeamService } from "./team.service";
 import { AuthGuard } from "@nestjs/passport";
 import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
-import { AuthUser } from "src/utilities/user.decorator";
+import { AuthUser } from "../../utilities/user.decorator";
 import {ApiBearerAuth, ApiTags, ApiResponse } from "@nestjs/swagger";
 import { LeaderGuard } from "../../guards/leader.guard";
 import { User } from "../user/user.entity";

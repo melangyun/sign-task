@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --config ./test/jest-e2e.json --verbose",
+    "test": "npm run test:e2e --detectOpenHandles --forceExit --maxWorkers=30",
     "test:watch": "jest --watch",
     "test:cov": "jest --config ./test/jest-e2e.json --verbose --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@nestjs/cli": "^7.1.0",
     "@nestjs/schematics": "^7.0.0",
-    "@nestjs/testing": "^7.0.0",
+    "@nestjs/testing": "^7.0.7",
     "@types/bcrypt": "^3.0.0",
     "@types/express": "^4.17.3",
     "@types/hapi__joi": "^16.0.12",

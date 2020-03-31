@@ -1,7 +1,7 @@
 import { Controller, Get, Post, UseInterceptors, UploadedFile, Delete, UseGuards, Body, HttpStatus, HttpException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
-import { ApiFile } from 'src/utilities/apiFile.decorator';
+import { ApiFile } from '../../utilities/apiFile.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from './multer.config';
 import * as fs from "fs";
