@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
-import { Repository, UpdateResult, DeleteResult } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
 import { DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
