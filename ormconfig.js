@@ -10,5 +10,6 @@ module.exports = {
     "database": process.env.DB_NAME || "sign",
     "entities": [process.env.ENTITYPATH || "dist/modules/**/*.entity.js"],
     "synchronize": true,
-    "logging" : "error"
+    "dropSchema" : process.env.DROPSCHEMA || false,
   }
+  // "logging" : ["error"],
