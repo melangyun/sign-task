@@ -24,16 +24,18 @@ describe('user', () => {
     await request(app.getHttpServer())
         .post("/auth/register")
         .set("Accept", "application/json")
-        .send(register);
+        .send(register)
 
-    // 토큰 받아옴!
+    // 토큰 받아서 설정
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
         .send(login)
         .then(({body}) => {
             accessToken = body.token;
-        });
+        })
+
+
   });
 
   afterAll(async () => {
