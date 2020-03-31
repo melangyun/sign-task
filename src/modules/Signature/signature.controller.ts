@@ -2,7 +2,7 @@ import { Controller, UseGuards, Post, Body, Delete, Get, Param } from "@nestjs/c
 import { SignatureService } from "./signature.service";
 import { ApiBearerAuth, ApiTags, ApiResponse,  } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
-import { AuthUser } from "src/utilities/user.decorator";
+import { AuthUser } from "../../utilities/user.decorator";
 import { SignDTO, DeleteSignDTO } from "./signature.dto";
 import { User } from "../user/user.entity";
 import { Signature } from "./signature.entity";
@@ -33,6 +33,7 @@ export class SignatureController{
     }
     
     @Get("team/:teamId")
+    @ApiResponse({status:200, description:"Successfully get Signature"})
     @ApiResponse({status:406, description:"No Access for the team"})
     async geTeamSigns(@Param("teamId") teamId:number ,@AuthUser() authUser:User):Promise<Signature[]>{
         return await this.signatureService.geTeamSigns( teamId, authUser.id );

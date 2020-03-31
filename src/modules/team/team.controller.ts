@@ -2,7 +2,7 @@ import { Controller, Post, UseGuards, Body, Delete, Get, Param, Patch } from "@n
 import { TeamService } from "./team.service";
 import { AuthGuard } from "@nestjs/passport";
 import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
-import { AuthUser } from "src/utilities/user.decorator";
+import { AuthUser } from "../../utilities/user.decorator";
 import {ApiBearerAuth, ApiTags, ApiResponse } from "@nestjs/swagger";
 import { LeaderGuard } from "../../guards/leader.guard";
 import { User } from "../user/user.entity";
@@ -33,7 +33,7 @@ export class TeamController{
     
     @Post()
     @ApiResponse({status:201, description: "Team creation success"})
-    async createTeam(@Body() createTeamDTO: CreateTeamDTO, @AuthUser() authUser:User){
+    async createTeam(@Body() createTeamDTO: CreateTeamDTO, @AuthUser() authUser:User):Promise<object>{
         // 팀생성
         const teamId:number = await this.teamService.create(createTeamDTO.name, authUser.id);
 
@@ -63,7 +63,7 @@ export class TeamController{
     @ApiResponse({status:200, description: "User add success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
-    async addUser(@Body() addUserDTO : TeamUserDTO){
+    async addUser(@Body() addUserDTO : TeamUserDTO):Promise<string>{
         // 팀 맴버 추가
         await this.teamService.addUser(addUserDTO);
         return "User Added Successfully";
@@ -74,7 +74,7 @@ export class TeamController{
     @ApiResponse({status:200, description: "Privilege modification succeeded"})
     @ApiResponse({status:400, description: "Invalid memberId or member"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
-    async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO){
+    async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO):Promise<string>{
         // 팀 맴버 권한 수정
         await this.teamService.modifyPermissions(modifyPermissionDTO);
         return "Permission modification succeeded";
@@ -85,7 +85,7 @@ export class TeamController{
     @ApiResponse({status:200, description: "Team member delete success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
-    async deleteUser(@Body() deleteUserDTO : TeamUserDTO){
+    async deleteUser(@Body() deleteUserDTO : TeamUserDTO):Promise<string>{
         // 팀 맴버 삭제
         await this.teamService.deleteUser(deleteUserDTO);
         return "Team member delete success";
