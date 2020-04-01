@@ -4,7 +4,7 @@ import { TestModule } from "./test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
 
-describe('user', () => {
+describe('SIGNATURE', () => {
 
   let app:INestApplication;
   let accessToken:string;

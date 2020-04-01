@@ -18,7 +18,7 @@ export class TeamService{
     ){}
 
     // 팀 확인 :  1. 팀 아이디 검사 2. 활성화 되어있는 팀인지 검사
-    async verifyTeam(teamId:number){
+    async verifyTeam(teamId:number):Promise<Team>{
         const team:Team = await this.teamRepository.findOne({id: teamId});
 
         if( !team ){

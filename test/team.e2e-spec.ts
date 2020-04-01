@@ -1,9 +1,10 @@
+// ! 헐.. 팀 1개 정보 조회하는게 없는것같다.....!;
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { TestModule } from "./test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
-import { CreateTeamDTO } from '../src/modules/team/team.dto';
+import { CreateTeamDTO, DeleteTeamDTO } from '../src/modules/team/team.dto';
 
 describe('TEAM', () => {
 
@@ -43,7 +44,7 @@ describe('TEAM', () => {
         .then(({body}) => {
             accessToken_1 = body.token;
         });
-
+    
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
@@ -58,16 +59,17 @@ describe('TEAM', () => {
     await app.close();
   });
 
-  // ! 헐.. 팀 1개 정보 조회하는게 없는것같다.....!;
+  // 팀 생성
   describe( "/team (POST)" ,() => {
-    it("team creation should be rejected without login", () => {
+    // 로그인 없이 팀 생성이 되지 않아야함
+    it("team creation should be rejected without login", async () => {
       const createteam :CreateTeamDTO[] = [
         { name : "testTeam01" },
         { name : "testTeam02" }
       ];
       
       for( let i = 0 ; i < createteam.length ; i++ ){
-        request(app.getHttpServer())
+        await request(app.getHttpServer())
           .post('/team')
           .send(createteam[i])
           .expect(HttpStatus.UNAUTHORIZED)
@@ -78,7 +80,8 @@ describe('TEAM', () => {
     });
   });
 
-    it("should be successfully created team", async () => {
+  // 팀생성(정상 성공)
+  it("should be successfully created team", async () => {
       const createteam :CreateTeamDTO[] = [
         { name : "testTeam01" },
         { name : "testTeam02" }
@@ -98,9 +101,9 @@ describe('TEAM', () => {
     });
 
 
-  describe( "/team (GET)" ,() => {
-    
     // 유저 참여 팀 조회
+  describe( "/team (GET)" ,() => {
+    // 정상 조회
     it("should get list of participating teams.", () => {
         return request(app.getHttpServer())
           .get('/team')
@@ -135,6 +138,7 @@ describe('TEAM', () => {
           });
     });
 
+    // 조인된 팀이 없다면 빈 배열을 반환해 주어야함
     it("should return an empty array when has no join team.", () => {
       return request(app.getHttpServer())
         .get('/team')
@@ -145,6 +149,7 @@ describe('TEAM', () => {
         });
   });
 
+    // 로그인 없는 팀 조회는 reject
     it("team creation should be rejected without login", () => {
         return request(app.getHttpServer())
           .get('/team')
@@ -155,8 +160,78 @@ describe('TEAM', () => {
     });
   });
 
+  // 팀 삭제
   describe( "/team (DELETE)" ,() => {
 
+    const deleteTeamDTO:DeleteTeamDTO = { "teamId" : 1 };
+
+    // 로그인 없이는 reject
+    it("should reject delete team without login", () => {
+      return request(app.getHttpServer())
+        .delete("/team")
+        .send(deleteTeamDTO)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body}) => {
+          expect(body.message).toEqual("Unauthorized");
+        });
+   });
+
+    // 정상 삭제 성공
+    it("should delete participating team", () => {
+        return request(app.getHttpServer())
+          .delete("/team")
+          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .send(deleteTeamDTO)
+          .expect(HttpStatus.OK)
+          .expect(({body}) => {
+             expect(body.result).toBeDefined();
+          });
+    });
+
+    // 삭제된 팀에 접근 시도시 접근 할 수 없는 요청
+    it("should not access to deleted team", () => {
+      return request(app.getHttpServer())
+        .delete("/team")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(deleteTeamDTO)
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body}) => {
+           expect(body.message).toEqual("Unable to access deleted team.");
+        });
+  });
+
+  // 삭제된 팀은 조회시 조회되지 않아야함
+  it("Should not be inquired deleted teams", () => {
+    return request(app.getHttpServer())
+      .get('/team')
+      .set('Authorization', `Bearer ${ accessToken_1 }`)
+      .expect(HttpStatus.OK)
+      .expect(({body}) => {
+        expect(body).not.toContain({
+          teamsByLeader : [
+               {
+                "id": 1,
+                "leader": "testuser",
+                "name": "testTeam01",
+              },
+             ],
+             "teamsByMember":  [
+               {
+                "id": 1,
+                "leader": "testuser",
+                "name": "testTeam01",
+              },
+             ]});
+      });
+});
+
+
+    
+  });
+
+
+  describe("/team/{teamId}", () => {
+    
   });
 
   describe( "/team/user (GET)" ,() => {
