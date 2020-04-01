@@ -42,28 +42,28 @@ describe('SIGNATURE', () => {
     await app.close();
   });
 
-  describe( "/user/{search} (GET)" ,() => {
-    // 유저 검색결과
-    it('should get user search result', () => {
-        const rearchKey = "test";
-        return request(app.getHttpServer())
-          .get(`/user/${rearchKey}`)
-          .set('Authorization', `Bearer ${ accessToken }`)
-          .expect(HttpStatus.OK)
-          .expect(({body}) => {
-            expect(body).toContainEqual({ id : register.id , nickname : register.nickname })
-          })
-      });
+  // 서명 생성
+  describe( "/signature (POST)" ,() => {
+    
+  });
 
-    // 토큰 없이는 받아오지 않음
-    it('should not get user search result without accessToken', () => {
-        const rearchKey = "test";
-        return request(app.getHttpServer())
-            .get(`/user/${rearchKey}`)
-            .expect(HttpStatus.UNAUTHORIZED)
-            .expect(({body}) => {
-            expect(body.message).toEqual("Unauthorized");
-            })
-        });
+  // 서명 삭제
+  describe( "/signature (DELETE)" ,() => {
+   
+  });
+
+  // 개인 서명을 가지고 옴
+  describe( "/signature/user (GET)" ,() => {
+   
+  });
+
+  // 팀 서명 조회
+  describe( "/signature/team/{teamId} (GET)" ,() => {
+   
+  });
+
+  // 서명 아이디로 조회
+  describe( "/signature/signature/{signId} (GET)" ,() => {
+   
   });
 });
