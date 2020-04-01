@@ -33,7 +33,7 @@ export class SignatureController{
     }
     
     @Get("team/:teamId")
-    @ApiResponse({status:200, description:"Successfully get Signature"})
+    @ApiResponse({status:201, description:"Successfully get Signature"})
     @ApiResponse({status:406, description:"No Access for the team"})
     async geTeamSigns(@Param("teamId") teamId:number ,@AuthUser() authUser:User):Promise<Signature[]>{
         return await this.signatureService.geTeamSigns( teamId, authUser.id );
