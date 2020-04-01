@@ -231,11 +231,51 @@ describe('TEAM', () => {
 
 
   describe("/team/{teamId}", () => {
-    
+    // 팀 정보 조회
+    it("Should be return team Information", () => {
+      const teamId = 2;
+
+      return request(app.getHttpServer())
+        .get(`/team/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .expect(HttpStatus.OK)
+        .expect(({body})=> {
+          expect(body).toHaveProperty("id");
+          expect(body).toHaveProperty("name");
+          expect(body).toHaveProperty("isActive");
+          expect(body).toHaveProperty("leader");
+          expect(body).toHaveProperty("createAt");
+          expect(body).toHaveProperty("updateAt");
+        })
+    });
+
+    // 삭제된 팀은 reject되어야 함
+    it("should not access to deleted team", () => {
+      const teamId = 1;
+      return request(app.getHttpServer())
+        .get(`/team/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unable to access deleted team.");
+        });
+    });
+
+    // 로그인 없이는 reject
+    it("should not access to deleted team", () => {
+      const teamId = 1;
+      return request(app.getHttpServer())
+        .get(`/team/${teamId}`)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unauthorized");
+        });
+    });
+
   });
 
-  describe( "/team/user (GET)" ,() => {
-
+  describe( "/team/user/{teamId} (GET)" ,() => {
+    
   });
 
   describe( "/team/user (POST)" ,() => {
