@@ -69,7 +69,7 @@ export class TeamController{
 
     @Post("/user")
     @UseGuards(LeaderGuard)
-    @ApiResponse({status:200, description: "User add success"})
+    @ApiResponse({status:201, description: "User add success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async addUser(@Body() addUserDTO : TeamUserDTO):Promise<string>{

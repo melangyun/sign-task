@@ -1,10 +1,9 @@
-// ! 헐.. 팀 1개 정보 조회하는게 없는것같다.....!;
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { TestModule } from "./test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
-import { CreateTeamDTO, DeleteTeamDTO } from '../src/modules/team/team.dto';
+import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO } from '../src/modules/team/team.dto';
 
 describe('TEAM', () => {
 
@@ -223,14 +222,14 @@ describe('TEAM', () => {
               },
              ]});
       });
-});
-
-
-    
   });
 
 
-  describe("/team/{teamId}", () => {
+    
+});
+
+
+  describe("/team/{teamId} (GET)", () => {
     // 팀 정보 조회
     it("Should be return team Information", () => {
       const teamId = 2;
@@ -262,10 +261,34 @@ describe('TEAM', () => {
     });
 
     // 로그인 없이는 reject
-    it("should not access to deleted team", () => {
-      const teamId = 1;
+    it("should not access without login", () => {
+      const teamId = 2;
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unauthorized");
+        });
+    });
+
+    // 없는 팀 접근 불가
+    it("should not access to Invalid teamId", () => {
+      const teamId = 3;
+      return request(app.getHttpServer())
+        .get(`/team/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Invalid teamId");
+        });
+    });
+
+    // 가입되지 않았다면 접근 불가
+    it("Should not be accessed if not join in", () => {
+      const teamId = 2;
+      return request(app.getHttpServer())
+        .get(`/team/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_2 }`)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=> {
           expect(body.message).toEqual("Unauthorized");
@@ -275,10 +298,127 @@ describe('TEAM', () => {
   });
 
   describe( "/team/user/{teamId} (GET)" ,() => {
-    
+
+    // 로그인 없이는 reject
+    it("should not access without login", () => {
+      const teamId = 2;
+      return request(app.getHttpServer())
+        .get(`/team/user/${teamId}`)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unauthorized");
+        });
+    });
+
+    // 삭제된 팀은 접근시 reject
+    it("should not access to deleted team", () => {
+      const teamId = 1;
+      return request(app.getHttpServer())
+        .get(`/team/user/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unable to access deleted team.");
+        });
+    });
+
+    // 가입되지 않았다면 접근 불가
+    it("Should not be accessed if not join in", () => {
+      const teamId = 2;
+      return request(app.getHttpServer())
+        .get(`/team/user/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Unauthorized");
+        });
+    });
+
+    // 정상적으로 받았을 경우 배열과 함께 유저, 권한이 첨부되어 있어야함
+    it("Should receive team members and auth", () => {
+      const teamId = 2;
+      return request(app.getHttpServer())
+        .get(`/team/user/${teamId}`)
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .expect(HttpStatus.OK)
+        .expect(({body})=> {
+          expect(body.length >= 1 ).toBeTruthy();
+          expect(body[0]).toHaveProperty("auth");
+          expect(body[0]).toHaveProperty("user");
+          expect(body[0].auth).toHaveProperty("lookup");
+          expect(body[0].auth).toHaveProperty("add");
+          expect(body[0].auth).toHaveProperty("delete");
+          expect(body[0].user).toHaveProperty("id");
+          expect(body[0].user).toHaveProperty("nickname");
+        });
+    });
   });
 
+  // 유저 등록
   describe( "/team/user (POST)" ,() => {
+    // 유저 등록 성공
+    it("should be added user successfully", () => {
+      const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
+      return request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(teamUserDTO)
+        .expect(HttpStatus.CREATED)
+        .expect(({text})=>{
+          expect(text).toEqual("User Added Successfully");
+        });
+    });
+
+    // 유저와 팀이 Invalid할때 reject
+    it("should rejected invalid user or team", async () => {
+      // 없는 teamId
+      const teamUserDTO:TeamUserDTO = { teamId: 100, memberId: "testuser2" };
+      await request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(teamUserDTO)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Invalid teamId");
+        });
+      
+      // 없는 memberId
+      const teamUserDTO_1:TeamUserDTO = { teamId: 2, memberId: "testuser10" };
+      await request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(teamUserDTO_1)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Invalid user");
+        });
+    });
+
+    // 삭제된 팀 접근
+    it("should rejected deleted team", () => {
+      const teamUserDTO:TeamUserDTO = { teamId: 1, memberId: "testuser2" };
+      return request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(teamUserDTO)
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Unable to access deleted team.");
+        });
+    });
+
+    // 팀 리더가 아닐경우 거부
+    it( "Should reject if not team leader", () => {
+      const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
+      return request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .send(teamUserDTO)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Unauthorized access");
+        });
+    });
 
   });
 
