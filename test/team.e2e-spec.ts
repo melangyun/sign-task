@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { TestModule } from "./test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
-import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO } from '../src/modules/team/team.dto';
+import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from '../src/modules/team/team.dto';
 
 describe('TEAM', () => {
 
@@ -223,8 +223,6 @@ describe('TEAM', () => {
              ]});
       });
   });
-
-
     
 });
 
@@ -356,19 +354,6 @@ describe('TEAM', () => {
 
   // 유저 등록
   describe( "/team/user (POST)" ,() => {
-    // 유저 등록 성공
-    it("should be added user successfully", () => {
-      const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
-      return request(app.getHttpServer())
-        .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send(teamUserDTO)
-        .expect(HttpStatus.CREATED)
-        .expect(({text})=>{
-          expect(text).toEqual("User Added Successfully");
-        });
-    });
-
     // 유저와 팀이 Invalid할때 reject
     it("should rejected invalid user or team", async () => {
       // 없는 teamId
@@ -420,14 +405,125 @@ describe('TEAM', () => {
         });
     });
 
+    // 유저 등록 성공
+    it("should be added user successfully", () => {
+      const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
+      return request(app.getHttpServer())
+        .post("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(teamUserDTO)
+        .expect(HttpStatus.CREATED)
+        .expect(({text})=>{
+          expect(text).toEqual("User Added Successfully");
+        });
+    });
   });
 
+  // 유저 권한 수정
   describe( "/team/user (PATCH)" ,() => {
+    const auth = { "lookup" : true, "delete" : false, "add" : true };
 
+    // 유저와 팀이 Invalid할때 reject
+    it("should rejected invalid user or team", async () => {
+      // 없는 teamId
+      const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 100, memberId:"testuser2", auth };
+      await request(app.getHttpServer())
+        .patch("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(modifyPermissionDTO)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Invalid teamId");
+        });
+      
+        //없는 아이디..
+      const modifyPermissionDTO_1:ModifyPermissionDTO = { teamId: 2, memberId:"invalidUser", auth };
+
+      await request(app.getHttpServer())
+        .patch("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(modifyPermissionDTO_1)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Invalid user");
+        });
+    });
+
+    // 삭제된 팀 접근
+    it("should rejected deleted team", () => {
+      const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 1, memberId:"testuser2", auth };
+      return request(app.getHttpServer())
+        .patch("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(modifyPermissionDTO)
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Unable to access deleted team.");
+        });
+    });
+
+    // 정상 정보
+    const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 2, memberId:"testuser2", auth };
+    // 팀 리더가 아닐경우 거부
+    it( "Should reject if not team leader", () => {
+      return request(app.getHttpServer())
+        .patch("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .send(modifyPermissionDTO)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Unauthorized access");
+        });
+    });
+
+    
+    // 변경 성공
+    it("Should modify user signature auth", () => {
+      return request(app.getHttpServer())
+      .patch("/team/user")
+      .set('Authorization', `Bearer ${ accessToken_1 }`)
+      .send(modifyPermissionDTO)
+      .expect(HttpStatus.OK)
+      .expect(({text})=>{
+        expect(text).toEqual("Permission modification succeeded");
+      });
+    });
+    // 가입되지 않은 유저의 경우 실패
+    it("In the case of users who are not on the team, the request should be rejected.",async () => {
+      const register :RegisterDTO = { id : "hong1234", nickname:"testUser", password : "1234"};
+      const login :LoginDTO = { id : "hong1234" , password : "1234" };
+      let token :string;
+
+      await request(app.getHttpServer())
+          .post("/auth/register")
+          .set("Accept", "application/json")
+          .send(register);
+
+      await request(app.getHttpServer())
+          .post("/auth/login")
+          .set("Accept", "application/json")
+          .send(login)
+          .then(({body})=> {
+            token = body.token;
+          })
+
+      const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 2, memberId:"hong1234", auth };
+
+      return await request(app.getHttpServer())
+        .patch("/team/user")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send(modifyPermissionDTO)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=>{
+          expect(body.message).toEqual("Invalid teamMember");
+        });
+
+    });
+    
   });
 
   describe( "/team/user (DELETE)" ,() => {
-
+    
   });
 
   describe( "/team/user/auth/{teamId} (GET)" ,() => {
