@@ -20,6 +20,15 @@ export class TeamController{
         ){}
 
     
+    @Get("/:teamId")
+    @ApiResponse({status:200, description: "Team Information Lookup" })
+    @ApiResponse({status:406, description: "Unable to access Invalid team."})
+    async getTeamInfo(@Param("teamId") teamId:number ):Promise<Team>{
+    //팀 정보 조회
+        return await this.teamService.verifyTeam(teamId);
+    }
+
+    
     @Get()
     @ApiResponse({status:200, description:"Successfully retrieving team lists"})
     async getMyTeamList(@AuthUser() authUser:User):Promise<{teamsByLeader:Team[], teamsByMember:Team[]}>{
@@ -60,7 +69,7 @@ export class TeamController{
 
     @Post("/user")
     @UseGuards(LeaderGuard)
-    @ApiResponse({status:200, description: "User add success"})
+    @ApiResponse({status:201, description: "User add success"})
     @ApiResponse({status:400, description: "Invalid memberId"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async addUser(@Body() addUserDTO : TeamUserDTO):Promise<string>{

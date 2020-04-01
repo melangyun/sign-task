@@ -14,9 +14,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --detectOpenHandles --forceExit --maxWorkers=30 --verbose",
+    "test": "jest --detectOpenHandles --forceExit --maxWorkers=10 --verbose",
     "test:watch": "jest --watch",
-    "test:cov": "jest --config ./test/jest-e2e.json --verbose --coverage",
+    "test:cov": "jest --detectOpenHandles --forceExit --maxWorkers=10 --verbose --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json --verbose"
   },
@@ -81,8 +81,8 @@
         "diagnostics": true
       }
     },
-    "rootDir": "test/",
-    "testRegex": ".test.ts$",
+    "rootDir": "test",
+    "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
