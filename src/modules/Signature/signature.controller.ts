@@ -51,7 +51,7 @@ export class SignatureController{
     }
 
     @Delete()
-    @ApiResponse({status:200, description:"Successfully get Signature"})
+    @ApiResponse({status:200, description:"Successfully delete Signature"})
     @ApiResponse({status:400, description:"Invalid signature key"})
     @ApiResponse({status:406, description:"No Access for the signature"})
     async deleteSignature(@Body() deletesignDTO :DeleteSignDTO, @AuthUser() authUser:User):Promise<string>{

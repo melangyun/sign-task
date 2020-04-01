@@ -334,5 +334,59 @@ describe('SIGNATURE', () => {
   // 서명 삭제
   describe( "/signature (DELETE)" ,() => {
     
+    // 타인이 접근
+    it("shoul be rejected when the others access to signature", () => {
+      return request(app.getHttpServer())
+      .delete("/signature")
+      .set('Authorization', `Bearer ${ accessToken_2 }`)
+      .send({signatureId : signId_Private})
+      .expect(HttpStatus.NOT_ACCEPTABLE)
+      .expect(({body})=> {
+        expect(body.message).toEqual("Unvalid access");
+      });
+    });
+    
+
+    // 팀 권한이 없는 유저가 접근
+    it("Should be rejected when requested by unauthorized user (team signature)", () => {
+      return request(app.getHttpServer())
+        .delete("/signature")
+        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .send({signatureId : signId_Team})
+        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(({body})=> {
+          expect(body.message).toEqual('Unvalid access');
+        })
+    });
+
+    // 서명 키가 일치하지 않을때!
+    it("Invalid signature key", () => {
+      return request(app.getHttpServer())
+        .delete("/signature")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send({signatureId : (signId_Private+1)})
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(({body})=> {
+          expect(body.message).toEqual("Invalid signature key");
+        });
+    });
+
+    // 정상 접근
+    it("Successfully delete Signature (private)", () => {
+      return request(app.getHttpServer())
+        .delete("/signature")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send({signatureId : signId_Private})
+        .expect(HttpStatus.OK)
+    });
+    
+    // 정상 접근
+    it("Successfully delete Signature (team)", () => {
+      return request(app.getHttpServer())
+        .delete("/signature")
+        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .send({signatureId : signId_Team})
+        .expect(HttpStatus.OK)
+    });
   });
 });
