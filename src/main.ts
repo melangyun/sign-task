@@ -8,8 +8,8 @@ async function bootstrap() {
 
   const options = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle("Sign shared program")
-    .setDescription("example description")
+    .setTitle("Signature shared program")
+    .setDescription("API Documents about Signature shared program")
     .setVersion("1.0")
     .build();
 
@@ -17,7 +17,11 @@ async function bootstrap() {
     SwaggerModule.setup("api", app, document);
 
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(3000);
+
+  const port:any = process.env.PORT;
+  await app.listen(port);
+  console.log(`app listen on : ${port}`)
+
 }
 bootstrap();
 
