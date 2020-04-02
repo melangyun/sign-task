@@ -121,11 +121,12 @@ export class TeamService{
     }
 
     // 팀 아이디를 받아 맴버 아이디, 닉네임, 권한을 돌려줌
-    async getUsers(id:number):Promise<TeamUser[]>{
-        await this.verifyTeam(id);
+    async getUsers(teamId:number, userId:string):Promise<TeamUser[]>{
+        await this.verifyTeam(teamId);
+        await this.getTeamUser(teamId, userId)
         return await this.teamUserRepository.createQueryBuilder("team_user")
             .select(["team_user.auth","user.id" , "user.nickname"])
-            .where("team_user.teamId = :id", { id })
+            .where("team_user.teamId = :id", { id : teamId })
             .leftJoin("team_user.user", "user")
             .andWhere("user.is_active = :status", {status : true})
             .getMany();
@@ -135,15 +136,19 @@ export class TeamService{
     async deleteUser(deleteUserDTO : TeamUserDTO){
         const { teamId, memberId } = deleteUserDTO;
         await this.userService.verifyUser(memberId);
+        const team = await this.verifyTeam(teamId);
+
+        if( team.leader === memberId ){
+            throw new HttpException("Can't delete TeamLeader", HttpStatus.BAD_REQUEST );
+        }
 
         const user = new User();
         user.id = memberId;
-        const team = new Team()
-        team.id = teamId;
         
         await this.teamUserRepository.delete({user, team});   
     }
 
+    // 유저 상세정보(권한 가입일 등) 을 리턴함
     async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
         await this.userService.verifyUser(userId);
         await this.verifyTeam(teamId);

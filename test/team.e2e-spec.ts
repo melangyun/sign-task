@@ -288,9 +288,9 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.BAD_REQUEST)
         .expect(({body})=> {
-          expect(body.message).toEqual("Unauthorized");
+          expect(body.message).toEqual("Not on the team");
         });
     });
 
@@ -327,9 +327,9 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/user/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .expect(HttpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.BAD_REQUEST)
         .expect(({body})=> {
-          expect(body.message).toEqual("Unauthorized");
+          expect(body.message).toEqual("Not on the team");
         });
     });
 
@@ -624,7 +624,7 @@ describe('TEAM', () => {
         .send(teamUserDTO)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(({body})=>{
-          expect(body).toEqual("Team member delete success");
+          expect(body.message).toEqual("Can't delete TeamLeader");
         });
     });
   });
