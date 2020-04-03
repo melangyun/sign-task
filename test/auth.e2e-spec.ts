@@ -80,7 +80,7 @@ describe('AUTH', () => {
         .send(user)
         .expect(({body})=> {
           expect(body.token).toBeUndefined();
-          expect(body.message).toEqual("Invalid credentails");
+          expect(body.message).toEqual("Invalid credential");
           expect(body.nickname).toBeUndefined();
           expect(body.id).toBeUndefined();
           expect(body.password).toBeUndefined();

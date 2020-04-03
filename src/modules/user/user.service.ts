@@ -41,14 +41,14 @@ export class UserService {
         const { id, password } = userDTO;
         const user = await this.userRepository.findOne({id});
         if(!user){
-            throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
+            throw new HttpException("Invalid credential", HttpStatus.UNAUTHORIZED );
         }
 
         if ( await bcrypt.compare(password, user.password)){
             return this.sanitizeUser(user);
         }
 
-        throw new HttpException("Invalid credentails", HttpStatus.UNAUTHORIZED );
+        throw new HttpException("Invalid credential", HttpStatus.UNAUTHORIZED );
     }
 
     // 검색어로 아이디, 닉네임 검색

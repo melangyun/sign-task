@@ -16,7 +16,7 @@ export class AuthController{
 
     @Post("login")
     @ApiResponse({status:201, description: "login success"})
-    @ApiResponse({status:401, description : "Invalid credentails"})
+    @ApiResponse({status:401, description : "Invalid credential"})
     async login(@Body() userDTO: LoginDTO): Promise<{payload:Payload , token:string}>{
         // 로그인
         //const value : Signup = await signupSchema.validateAsync(signup);
