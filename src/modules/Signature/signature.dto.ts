@@ -6,7 +6,7 @@ export class SignDTO{
         type: Number,
         nullable:true
     })
-    readonly teamId: number;
+    readonly teamId?: number;
 
     @ApiProperty({
         description : "file url",
