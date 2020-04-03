@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  app:
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+      # - business-api
+
+  # business-api:
+  #   build: ./api
+  #   ports: 8081
+
+  database:
+    container_name: signDB
+    restart: always
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: sign
+      MYSQL_DATABASE: yun
+      MYSQL_PASSWORD: 1112
+    volumes:
+      - ./data:/var/lib/mysql
+
+#volumes: data-volume:
