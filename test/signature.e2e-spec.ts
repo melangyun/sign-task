@@ -107,7 +107,7 @@ describe('SIGNATURE', () => {
           .send(teamSignDTO)
           .expect(HttpStatus.NOT_ACCEPTABLE)
           .expect(({body})=> {
-            expect(body.message).toEqual("Unvalid access");
+            expect(body.message).toEqual("Invalid access");
           });
       });
   
@@ -216,7 +216,7 @@ describe('SIGNATURE', () => {
         .set('Authorization', `Bearer ${ accessToken_2 }`)
         .expect(HttpStatus.NOT_ACCEPTABLE)
         .expect(({body})=> {
-          expect(body.message).toEqual("Unvalid access");
+          expect(body.message).toEqual("Invalid access");
         });
     });
 
@@ -243,7 +243,7 @@ describe('SIGNATURE', () => {
         .set('Authorization', `Bearer ${ accessToken_3 }`)
         .expect(HttpStatus.NOT_ACCEPTABLE)
         .expect(({body})=> {
-          expect(body.message).toEqual("Unvalid access");
+          expect(body.message).toEqual("Invalid access");
         });
     });
 
@@ -342,7 +342,7 @@ describe('SIGNATURE', () => {
       .send({signatureId : signId_Private})
       .expect(HttpStatus.NOT_ACCEPTABLE)
       .expect(({body})=> {
-        expect(body.message).toEqual("Unvalid access");
+        expect(body.message).toEqual("Invalid access");
       });
     });
     
@@ -355,7 +355,7 @@ describe('SIGNATURE', () => {
         .send({signatureId : signId_Team})
         .expect(HttpStatus.NOT_ACCEPTABLE)
         .expect(({body})=> {
-          expect(body.message).toEqual('Unvalid access');
+          expect(body.message).toEqual('Invalid access');
         })
     });
 

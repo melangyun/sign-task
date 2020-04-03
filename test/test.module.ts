@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from '../src/modules/main/app.controller';
-import { AppService } from '../src/modules/main/app.service';
+import { AppController } from '../src/modules/app.controller';
+import { AppService } from '../src/modules/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../src/modules/user/user.module';
 import { SignatureModule } from "../src/modules/Signature/signature.module";

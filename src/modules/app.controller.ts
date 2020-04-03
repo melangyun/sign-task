@@ -1,9 +1,9 @@
 import { Controller, Get, Post, UseInterceptors, UploadedFile, Delete, UseGuards, Body, HttpStatus, HttpException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
-import { ApiFile } from '../../utilities/apiFile.decorator';
+import { ApiFile } from '../utilities/apiFile.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from './multer.config';
+import { multerOptions } from '../utilities/multer.config';
 import * as fs from "fs";
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteFileDTO } from "./app.dto";
@@ -44,7 +44,7 @@ export class AppController {
     // 전송받은 사진 삭제
     try {
       fs.unlinkSync(`uploads/${body.filename}`)
-      return "dcelete File Success";
+      return "delete File Success";
     } catch(e){
       throw new HttpException("File not exist", HttpStatus.BAD_REQUEST);
     }

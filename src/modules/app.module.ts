@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from '../user/user.module';
-import { SignatureModule } from "../Signature/signature.module";
-import { TeamModule } from "../team/team.module";
+import { UserModule } from './user/user.module';
+import { SignatureModule } from "./Signature/signature.module";
+import { TeamModule } from "./team/team.module";
 import { Connection } from 'typeorm';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

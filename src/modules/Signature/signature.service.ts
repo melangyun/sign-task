@@ -21,7 +21,7 @@ export class SignatureService {
         const teamUser:TeamUser = await this.teamService.getTeamUser(teamId, userId);
     
         if ( !teamUser || ( teamUser && !teamUser.auth[inquiry]) ){
-            throw new HttpException('Unvalid access', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
         }
     }
 
@@ -49,8 +49,6 @@ export class SignatureService {
         const registeredSign:Signature =  await this.signatureRepository.save(sign);
         return registeredSign.id;
     }
-    // 0de8dc8d-69d1-481d-a307-0063b5ac2113
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3QwMiIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAIiwiaWF0IjoxNTg1NTE1OTU3LCJleHAiOjE1ODU2MDIzNTd9.OqZxvhdPMijDy_Bb8gIJaWuXPiWxrST_VKercSR84PM
     // 서명 아이디로 서명 권한 확인 - private method
     private async validateSignId( signId:string, userId:string, key:string ):Promise<object> {
         const rowDataPacket:Array<any> =  await this.signatureRepository.
@@ -66,7 +64,7 @@ export class SignatureService {
             await this.validateUserAuth(sign.teamId , userId, key );
         } 
         else if ( sign.userId !== userId ) {
-            throw new HttpException('Unvalid access', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
         }
 
         return sign;
