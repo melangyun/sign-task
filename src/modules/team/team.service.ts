@@ -150,7 +150,7 @@ export class TeamService{
 
     // 유저 상세정보(권한 가입일 등) 을 리턴함
     async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
-        await this.userService.verifyUser(userId);
+        // await this.userService.verifyUser(userId);
         await this.verifyTeam(teamId);
 
         const user = new User();
