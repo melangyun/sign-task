@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --detectOpenHandles --forceExit --maxWorkers=10 --verbose --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json --verbose"
+    "test:e2e": "jest --config ./test/jest-e2e.json --verbose",
+    "deploy:local": "docker-compose --env-file .env.development up -d"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
