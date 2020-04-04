@@ -16,7 +16,7 @@ nickname!: string;
 password!: string;
 
 @Column({name:"is_active",type:"varchar", nullable:false, default: true})
-isActive!: string;
+isActive!: boolean;
 
 @Column({type:"varchar", nullable:true})
 refreshToken!: string;
