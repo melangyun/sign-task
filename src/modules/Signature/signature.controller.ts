@@ -6,7 +6,7 @@ import { AuthUser } from "../../utilities/user.decorator";
 import { SignDTO, DeleteSignDTO } from "./signature.dto";
 import { User } from "../user/user.entity";
 import { Signature } from "./signature.entity";
-
+import { signatureAuth } from "./signature.enum";
 
 
 @ApiTags("signature")
@@ -25,11 +25,11 @@ export class SignatureController{
         const { teamId } = signDTO;
 
         if(teamId){
-            await this.signatureService.validateUserAuth(teamId, authUser.id , "lookup");
+            await this.signatureService.validateUserAuth(teamId, authUser.id , signatureAuth.add );
         }
 
-        const signId:string = await this.signatureService.create(signDTO, authUser.id);
-        return { registeredId : signId };
+        const registeredId:string = await this.signatureService.create(signDTO, authUser.id);
+        return { registeredId };
     }
 
     @Get("user/")
@@ -42,7 +42,7 @@ export class SignatureController{
     @ApiResponse({status:201, description:"Successfully get Signature"})
     @ApiResponse({status:406, description:"No Access for the team"})
     async geTeamSigns(@Param("teamId") teamId:number ,@AuthUser() authUser:User):Promise<Signature[]>{
-        await this.signatureService.validateUserAuth( teamId, authUser.id, "lookup")
+        await this.signatureService.validateUserAuth( teamId, authUser.id, signatureAuth.lookup )
         return await this.signatureService.getSigns( authUser.id, teamId );
     }
 
@@ -54,7 +54,7 @@ export class SignatureController{
         // 서명 아이디로 서명 반환
         // ? 유저 아이디
         const { id } = authUser;
-        return await this.signatureService.validateSignId(signId, id, "lookup");
+        return await this.signatureService.validateSignId(signId, id, signatureAuth.lookup);
     }
 
     @Delete()
@@ -65,7 +65,7 @@ export class SignatureController{
         // 서명 삭제
         const { signatureId } = deleteSignDTO;
         const { id } = authUser;
-        await this.signatureService.validateSignId( signatureId, id , "delete");
+        await this.signatureService.validateSignId( signatureId, id , signatureAuth.delete);
         return await this.signatureService.delete(signatureId);
     }
 
