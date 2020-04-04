@@ -1,4 +1,3 @@
-import { AuthController } from "../../src/modules/auth/auth.controller";
 import { AuthService } from "../../src/modules/auth/auth.service";
 import { Test } from '@nestjs/testing';
 import { TestModule } from '../test.module';
@@ -7,8 +6,7 @@ import { RegisterDTO, LoginDTO } from "../../src/modules/auth/auth.dto";
 import { User } from "../../src/modules/user/user.entity";
 import { Payload } from "src/modules/auth/payload.type";
 
-describe("UserServoce", () => {
-    let authController:AuthController;
+describe("UserService", () => {
     let authService:AuthService;
     let userService: UserService;
     
@@ -19,7 +17,6 @@ describe("UserServoce", () => {
         .compile();
         
         authService = module.get<AuthService>(AuthService);
-        authController = module.get<AuthController>(AuthController);
         userService = module.get<UserService>(UserService);
 
         const user = new User();

@@ -1,16 +1,14 @@
-import { AuthController } from "../../src/modules/auth/auth.controller";
-import { AuthService } from "../../src/modules/auth/auth.service";
 import { Test } from '@nestjs/testing';
 import { TestModule } from '../test.module';
-import { Payload } from "../../src/modules/auth/payload.type";
-import { UserService } from "../../src/modules/user/user.service";
-import { RegisterDTO } from "../../src/modules/auth/auth.dto";
-import { User } from "../../src/modules/user/user.entity";
+import { TeamService } from 'src/modules/team/team.service';
+import { User } from 'src/modules/user/user.entity';
 
-describe("AppController", () => {
-    let authController:AuthController;
-    let authService:AuthService;
-    let userService: UserService;
+
+
+
+describe("TeamService", () => {
+
+    let teamService:TeamService;
 
     beforeAll( async () => {
         const module = await Test.createTestingModule({
@@ -18,11 +16,62 @@ describe("AppController", () => {
         })
         .compile();
         
-        authService = module.get<AuthService>(AuthService);
-        authController = module.get<AuthController>(AuthController);
-        userService = module.get<UserService>(UserService);
+        teamService = module.get<TeamService>(TeamService);
+
+        const user = new User();
+        user.id = "admin";
+        user.password = "1234";
+        user.nickname = "관리자";
+        await user.save()
+        
       });
     
+    describe("verifyTeam (METHOD)", () => {
+
+    });
     
+    describe("verifyUser (METHOD)", () => {
+
+    });
+
+    describe("create (METHOD)", () => {
+
+    });
+
+    describe("deleteTeam (METHOD)", () => {
+
+    });
+
+    describe("addUser (METHOD)", () => {
+
+    });
+
+    describe("modifyPermissions (METHOD)", () => {
+
+    });
+
+    describe("findAllMyTeam (METHOD)", () => {
+
+    });
+
+    describe("findAllMyTeam (METHOD)", () => {
+
+    });
+
+    describe("findAllJoinTeam (METHOD)", () => {
+
+    });
+
+    describe("getUsers (METHOD)", () => {
+
+    });
+
+    describe("deleteUser (METHOD)", () => {
+
+    });
+
+    describe("getTeamUser (METHOD)", () => {
+
+    });
 
 })
