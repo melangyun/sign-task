@@ -2,10 +2,10 @@ import { AuthController } from "../../src/modules/auth/auth.controller";
 import { AuthService } from "../../src/modules/auth/auth.service";
 import { Test } from '@nestjs/testing';
 import { TestModule } from '../test.module';
-import { Payload } from "../../src/modules/auth/payload.type";
 import { UserService } from "../../src/modules/user/user.service";
 import { RegisterDTO, LoginDTO } from "../../src/modules/auth/auth.dto";
 import { User } from "../../src/modules/user/user.entity";
+import { Payload } from "src/modules/auth/payload.type";
 
 describe("UserServoce", () => {
     let authController:AuthController;
@@ -109,13 +109,24 @@ describe("UserServoce", () => {
     });
         
     describe("AuthService", () => {
-        
-        it("register - Should be registered member", async () => {
-           
+        it("signPayload - Should return token", async () => {
+            const payload:Payload ={id:"admin", "nickname": "관리자"};
+            const token:string = await authService.signPayload(payload);
+            expect(typeof token).toEqual("string")
+            expect(token.length > 10).toBeTruthy();
         });
         
-        it("singPayload - JWT should be issued", () => {
-           
+        it("validateUser - JWT should be issued", async () => {
+            const id = "admin";
+            const spyFn = jest.spyOn(userService,"verifyUser");
+            
+            const result = await authService.validateUser({id});
+
+            expect(spyFn).toBeCalledTimes(1);
+            expect(spyFn).toBeCalledWith(id);
+            expect(result).toBeDefined();
+
+
         });
     });
 
