@@ -17,7 +17,7 @@ export class SignatureService {
     ){}
     
     // 팀의 존속 여부와 권한 확인
-    private async validateUserAuth (teamId:number, userId:string, inquiry:string):Promise<void>{
+    async validateUserAuth (teamId:number, userId:string, inquiry:string):Promise<void>{
         await this.teamService.verifyTeam(teamId);
         const teamUser:TeamUser = await this.teamService.getTeamUser(teamId, userId);
         if ( !teamUser || ( teamUser && !teamUser.auth[inquiry]) ){
@@ -30,13 +30,7 @@ export class SignatureService {
         const { teamId, url, desc } = signDTO;
         
         const team = new Team();
-        team.id = null;
-        
-        if( teamId ) {
-            // add 권한이 있는지 확인
-            await this.validateUserAuth(teamId, userId, "add" );
-            team.id = teamId;
-        }
+        team.id = teamId || null;
 
         const user = new User();
         user.id = userId;
@@ -51,7 +45,7 @@ export class SignatureService {
         return registeredSign.id;
     }
     // 서명 아이디로 서명 권한 확인 - private method
-    private async validateSignId( signId:string, userId:string, key:string ):Promise<object> {
+    async validateSignId( signId:string, userId:string, key:string ):Promise<object> {
         const rowDataPacket:Array<any> =  await this.signatureRepository.
             query(`select * from signature where is_active = true and id = "${signId}"`)
     
@@ -73,20 +67,14 @@ export class SignatureService {
         return sign;
     }
 
-    async findBySignId(signId : string, userId:string ):Promise<object>{
-        return this.validateSignId(signId , userId, "lookup" );
-    }
-
     // 서명 아이디로 서명 삭제
-    async delete(deleteSignDTO :DeleteSignDTO, userId : string):Promise<string>{
-        const { signatureId } = deleteSignDTO;
-        await this.validateSignId(signatureId, userId , "delete" );
+    async delete(signatureId :string):Promise<string>{
         const result:UpdateResult =  await this. signatureRepository.update( signatureId, {isActive : false} );
         return result.raw.message;
     }
 
-    // 사인(들)을 가져오는 method
-    private async getSigns(userId:string, teamId:number|null):Promise<Signature[]>{
+    // 사인(들)을 가져오는 method - 팀과 개인 공용!
+    async getSigns(userId:string, teamId:number|null):Promise<Signature[]>{
         const user = new User();
         user.id = userId;
 
@@ -94,18 +82,6 @@ export class SignatureService {
         team.id = teamId;
 
         return await this.signatureRepository.find( { user, isActive:true, team});
-    }
-
-    // 유저 서명 반환
-    async getUserSigns(id : string ):Promise<Signature[]>{
-        return await this.getSigns(id, null);
-    }
-
-    // 팀 서명 반환
-    async geTeamSigns(teamId : number ,userId : string):Promise<Signature[]>{
-        // 팀 서명 반환시에는 팀 id확인과, 팀 유저권환 확인을 함
-        await this.validateUserAuth(teamId, userId, "lookup");
-        return await this.getSigns(userId, teamId);
     }
 
 }
