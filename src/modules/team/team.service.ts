@@ -42,8 +42,8 @@ export class TeamService{
         team.leader = id;
         team.user = user;
         
-        const registedTeam: Team  =  await this.teamRepository.save(team);
-        team.id = registedTeam.id;
+        const registeredTeam: Team  =  await this.teamRepository.save(team);
+        team.id = registeredTeam.id;
 
         const teamUser = new TeamUser();
         teamUser.auth = {"lookup" : true, "add" : true, "delete" : true };
@@ -77,11 +77,11 @@ export class TeamService{
         const team = new Team();
         team.id = teamId;
 
-        const teamUesr = new TeamUser();
-        teamUesr.team = team;
-        teamUesr.user = addUser;
+        const teamUser = new TeamUser();
+        teamUser.team = team;
+        teamUser.user = addUser;
     
-        await this.teamUserRepository.save(teamUesr);
+        await this.teamUserRepository.save(teamUser);
     }
 
     // 유저 권한 수정
