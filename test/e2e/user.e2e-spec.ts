@@ -43,9 +43,9 @@ describe('USER', () => {
   describe( "/user/{search} (GET)" ,() => {
     // 유저 검색결과
     it('should get user search result', () => {
-        const rearchKey = "test";
+        const searchKey = "test";
         return request(app.getHttpServer())
-          .get(`/user/${rearchKey}`)
+          .get(`/user/${searchKey}`)
           .set('Authorization', `Bearer ${ accessToken }`)
           .expect(HttpStatus.OK)
           .expect(({body}) => {
@@ -55,9 +55,9 @@ describe('USER', () => {
 
     // 토큰 없이는 받아오지 않음
     it('should not get user search result without accessToken', () => {
-        const rearchKey = "test";
+        const searchKey = "test";
         return request(app.getHttpServer())
-            .get(`/user/${rearchKey}`)
+            .get(`/user/${searchKey}`)
             .expect(HttpStatus.UNAUTHORIZED)
             .expect(({body}) => {
               expect(body.message).toEqual("Unauthorized");
