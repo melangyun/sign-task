@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { TestModule } from "./test.module";
+import { TestModule } from "../test.module";
 import { INestApplication } from '@nestjs/common';
 
 describe('ROOT', () => {

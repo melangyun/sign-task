@@ -1,9 +1,9 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { TestModule } from "./test.module";
+import { TestModule } from "../test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
-import { RegisterDTO, LoginDTO } from '../src/modules/auth/auth.dto';
-import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from '../src/modules/team/team.dto';
+import { RegisterDTO, LoginDTO } from '../../src/modules/auth/auth.dto';
+import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from '../../src/modules/team/team.dto';
 
 describe('TEAM', () => {
 

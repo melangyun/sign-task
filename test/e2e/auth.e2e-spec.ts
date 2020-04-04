@@ -1,8 +1,8 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { RegisterDTO, LoginDTO } from "../src/modules/auth/auth.dto";
+import { RegisterDTO, LoginDTO } from "../../src/modules/auth/auth.dto";
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { TestModule } from './test.module';
+import { TestModule } from '../test.module';
 
 describe('AUTH', () => {
 
