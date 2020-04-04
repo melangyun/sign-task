@@ -60,7 +60,7 @@ export class TeamController{
         return { result };
     }
     
-    @Get("/user/:teamId")
+    @Get("/:teamId/user")
     @ApiResponse({status:200, description: "Successfully called up team member list"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async getUsers(@Param("teamId") teamId: number,  @AuthUser() authUser:User ):Promise<TeamUser[]>{
@@ -101,7 +101,7 @@ export class TeamController{
         return "Team member delete success";
     }
 
-    @Get("/user/auth/:teamId")
+    @Get("/:teamId/user/auth")
     @ApiResponse({status:200, description: "Privilege Lookup Successful"})
     @ApiResponse({status:400, description: "Invalid memberId"})
     @ApiResponse({status:406, description: "Unable to access Invalid team."})

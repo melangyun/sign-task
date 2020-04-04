@@ -296,13 +296,13 @@ describe('TEAM', () => {
 
   });
 
-  describe( "/team/user/{teamId} (GET)" ,() => {
+  describe( "/team/{teamId}/user (GET)" ,() => {
 
     // 로그인 없이는 reject
     it("should not access without login", () => {
       const teamId = 2;
       return request(app.getHttpServer())
-        .get(`/team/user/${teamId}`)
+        .get(`/team/${teamId}/user`)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=> {
           expect(body.message).toEqual("Unauthorized");
@@ -313,7 +313,7 @@ describe('TEAM', () => {
     it("should not access to deleted team", () => {
       const teamId = 1;
       return request(app.getHttpServer())
-        .get(`/team/user/${teamId}`)
+        .get(`/team/${teamId}/user`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .expect(HttpStatus.NOT_ACCEPTABLE)
         .expect(({body})=> {
@@ -325,7 +325,7 @@ describe('TEAM', () => {
     it("Should not be accessed if not join in", () => {
       const teamId = 2;
       return request(app.getHttpServer())
-        .get(`/team/user/${teamId}`)
+        .get(`/team/${teamId}/user`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(({body})=> {
@@ -337,7 +337,7 @@ describe('TEAM', () => {
     it("Should receive team members and auth", () => {
       const teamId = 2;
       return request(app.getHttpServer())
-        .get(`/team/user/${teamId}`)
+        .get(`/team/${teamId}/user`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=> {
@@ -523,11 +523,11 @@ describe('TEAM', () => {
   });
 
   // 유저 권한을 받아옴
-  describe( "/team/user/auth/{teamId} (GET)" ,() => {
+  describe( "/team/{teamId}/user/auth (GET)" ,() => {
     it( "User permissions should not be returned without login", () => {
       const teamId = 2;
       return request(app.getHttpServer())
-        .get(`/team/user/auth/${teamId}`)
+        .get(`/team/${teamId}/user/auth`)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=>{
           expect(body.message).toEqual("Unauthorized");
@@ -538,7 +538,7 @@ describe('TEAM', () => {
     it( "User permissions should be returned", () => {
       const teamId = 2;
       return request(app.getHttpServer())
-        .get(`/team/user/auth/${teamId}`)
+        .get(`/team/${teamId}/user/auth`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=>{
@@ -552,7 +552,7 @@ describe('TEAM', () => {
       it( "Should not have permission if access user have not joined the team", () => {
         const teamId = 2;
         return request(app.getHttpServer())
-          .get(`/team/user/auth/${teamId}`)
+          .get(`/team/${teamId}/user/auth`)
           .set('Authorization', `Bearer ${ accessToken_3 }`)
           .expect(HttpStatus.BAD_REQUEST)
           .expect(({body})=>{
