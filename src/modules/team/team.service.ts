@@ -22,11 +22,11 @@ export class TeamService{
         const team:Team = await this.teamRepository.findOne({id: teamId});
 
         if( !team ){
-            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamId", HttpStatus.NOT_FOUND);
         }
 
         if( !team.isActive ){
-            throw new HttpException('Unable to access deleted team.', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Unable to access deleted team.', HttpStatus.FORBIDDEN );
           }
 
         return team;
@@ -64,7 +64,7 @@ export class TeamService{
         const { teamId } = deleteTeamDTO;
         const result:UpdateResult = await this.teamRepository.update(teamId , {isActive : false}) ;
         if (!result.raw.changedRows) {
-            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamId", HttpStatus.NOT_FOUND);
         }
 
         return result.raw.message;
@@ -90,7 +90,7 @@ export class TeamService{
 
         const result:UpdateResult = await this.teamUserRepository.update({ team, user }, { auth })
         if(!result.raw.changedRows){
-            throw new HttpException("Invalid teamMember", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamMember", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -127,7 +127,7 @@ export class TeamService{
     async deleteUser( memberId :string, team : Team, user : User) {
         
         if( team.leader === memberId ){
-            throw new HttpException("Can't delete TeamLeader", HttpStatus.BAD_REQUEST );
+            throw new HttpException("Can't delete TeamLeader", HttpStatus.FORBIDDEN );
         }
 
         await this.teamUserRepository.delete({user, team});   
@@ -144,7 +144,7 @@ export class TeamService{
         const result:TeamUser = await this.teamUserRepository.findOne({user , team});
         
         if(!result){
-            throw new HttpException("Not on the team", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Not on the team", HttpStatus.FORBIDDEN);
         }
         
         return result;

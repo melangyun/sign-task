@@ -66,11 +66,11 @@ export class UserService {
     async verifyUser(id:string){
         const user:User = await this.userRepository.findOne({id});
         if( !user ){
-            throw new HttpException("Invalid user", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid user", HttpStatus.NOT_FOUND);
         }
         
         if( !user.isActive ){
-            throw new HttpException('Unable to access deleted member.', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Unable to access deleted member.', HttpStatus.FORBIDDEN );
         }
         
         return this.sanitizeUser(user);

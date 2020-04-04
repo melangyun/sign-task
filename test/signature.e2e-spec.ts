@@ -118,7 +118,7 @@ describe('SIGNATURE', () => {
             .post("/signature")
             .set('Authorization', `Bearer ${ accessToken_1 }`)
             .send(teamSignDTO)
-            .expect(HttpStatus.NOT_ACCEPTABLE)
+            .expect(HttpStatus.FORBIDDEN)
             .expect(({body})=> {
               expect(body.message).toEqual("Unable to access deleted team.");
             });
@@ -131,7 +131,7 @@ describe('SIGNATURE', () => {
         .post("/signature")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(singleSignDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid teamId");
         });
@@ -293,7 +293,7 @@ describe('SIGNATURE', () => {
       return request(app.getHttpServer())
         .get(`/signature/team/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_3 }`)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
         });
@@ -322,7 +322,7 @@ describe('SIGNATURE', () => {
         return request(app.getHttpServer())
           .get(`/signature/team/${2}`)
           .set('Authorization', `Bearer ${ accessToken_1 }`)
-          .expect(HttpStatus.NOT_ACCEPTABLE)
+          .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=> {
             expect(body.message).toEqual("Unable to access deleted team.");
           });
