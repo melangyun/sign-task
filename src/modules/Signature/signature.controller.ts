@@ -43,7 +43,7 @@ export class SignatureController{
     @ApiResponse({status:200, description:"Successfully get Signature"})
     @ApiResponse({status:400, description:"Invalid signature key"})
     @ApiResponse({status:406, description:"No Access for the signature"})
-    async getSignatures(@Param("signId") signId:string, @AuthUser() authUser:User):Promise<Signature>{
+    async getSignatures(@Param("signId") signId:string, @AuthUser() authUser:User):Promise<object>{
         // 서명 아이디로 서명 반환
         // ? 유저 아이디
         const { id } = authUser;

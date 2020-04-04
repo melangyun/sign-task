@@ -16,10 +16,10 @@ export class SignatureService {
         private teamService : TeamService
     ){}
     
-    // 권한 확인
+    // 팀의 존속 여부와 권한 확인
     private async validateUserAuth (teamId:number, userId:string, inquiry:string):Promise<void>{
+        await this.teamService.verifyTeam(teamId);
         const teamUser:TeamUser = await this.teamService.getTeamUser(teamId, userId);
-    
         if ( !teamUser || ( teamUser && !teamUser.auth[inquiry]) ){
             throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
         }
@@ -30,9 +30,10 @@ export class SignatureService {
         const { teamId, url, desc } = signDTO;
         
         const team = new Team();
-        if( !teamId ) {
-            team.id = null;   
-        } else {
+        team.id = null;
+        
+        if( teamId ) {
+            // add 권한이 있는지 확인
             await this.validateUserAuth(teamId, userId, "add" );
             team.id = teamId;
         }
@@ -57,27 +58,28 @@ export class SignatureService {
         const sign:any = rowDataPacket[0];
 
         if( !sign ){
+            // 일단 서명을 꺼내고, 없으면 키가 일치하지 않음.
             throw new HttpException('Invalid signature key', HttpStatus.BAD_REQUEST );
         }
 
         if( sign.teamId ){ 
+            // 팀에 등록된 팀 서명 이라면, 팀 권한 조회를 함!
             await this.validateUserAuth(sign.teamId , userId, key );
-        } 
-        else if ( sign.userId !== userId ) {
+        } else if ( sign.userId !== userId ) {
+            // 개인의 서명이라면, 본인이 등록한 서명이 맞는지 검사함 
             throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
         }
 
         return sign;
     }
 
-    async findBySignId(signId : string, userId:string ):Promise<Signature>{
-        const sign:any = this.validateSignId(signId , userId, "lookup" );
-        return sign;
+    async findBySignId(signId : string, userId:string ):Promise<object>{
+        return this.validateSignId(signId , userId, "lookup" );
     }
 
     // 서명 아이디로 서명 삭제
-    async delete(deletesignDTO :DeleteSignDTO, userId : string):Promise<string>{
-        const { signatureId } = deletesignDTO;
+    async delete(deleteSignDTO :DeleteSignDTO, userId : string):Promise<string>{
+        const { signatureId } = deleteSignDTO;
         await this.validateSignId(signatureId, userId , "delete" );
         const result:UpdateResult =  await this. signatureRepository.update( signatureId, {isActive : false} );
         return result.raw.message;
@@ -101,6 +103,7 @@ export class SignatureService {
 
     // 팀 서명 반환
     async geTeamSigns(teamId : number ,userId : string):Promise<Signature[]>{
+        // 팀 서명 반환시에는 팀 id확인과, 팀 유저권환 확인을 함
         await this.validateUserAuth(teamId, userId, "lookup");
         return await this.getSigns(userId, teamId);
     }

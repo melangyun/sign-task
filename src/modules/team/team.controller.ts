@@ -25,8 +25,11 @@ export class TeamController{
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async getTeamInfo(@Param("teamId") teamId:number,  @AuthUser() authUser:User ):Promise<Team>{
     //팀 정보 조회
+        const result:Team = await this.teamService.verifyTeam(teamId);
+
         await this.teamService.getTeamUser(teamId, authUser.id)
-        return await this.teamService.verifyTeam(teamId);
+        
+        return result;
     }
 
     
@@ -35,7 +38,7 @@ export class TeamController{
     async getMyTeamList(@AuthUser() authUser:User):Promise<{teamsByLeader:Team[], teamsByMember:Team[]}>{
         // 내가 속한 팀 전체 조회
         const { id } = authUser;
-        const teamsByLeader:Team[] = await this.teamService.findAllmyTeam(id);
+        const teamsByLeader:Team[] = await this.teamService.findAllMyTeam(id);
         const teamsByMember:Team[] = await this.teamService.findAllJoinTeam(id);
         return { teamsByLeader, teamsByMember };
     }
@@ -65,7 +68,10 @@ export class TeamController{
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async getUsers(@Param("teamId") teamId: number,  @AuthUser() authUser:User ):Promise<TeamUser[]>{
         // 팀 맴버 조회
-        return await this.teamService.getUsers(teamId, authUser.id);
+        const { id } = authUser;
+        await this.teamService.verifyTeam( teamId );
+        await this.teamService.getTeamUser( teamId, id );
+        return await this.teamService.getUsers(teamId);
     }
 
     @Post("/user")
@@ -75,7 +81,12 @@ export class TeamController{
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async addUser(@Body() addUserDTO : TeamUserDTO):Promise<string>{
         // 팀 맴버 추가
-        await this.teamService.addUser(addUserDTO);
+        const { teamId , memberId } = addUserDTO;
+        const team:Team = await this.teamService.verifyTeam(teamId);
+        const user:User = await this.teamService.verifyUser(memberId);
+
+        await this.teamService.addUser(team, user);
+
         return "User Added Successfully";
     }
 
@@ -86,6 +97,7 @@ export class TeamController{
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async modifyPermissions(@Body() modifyPermissionDTO: ModifyPermissionDTO):Promise<string>{
         // 팀 맴버 권한 수정
+        await this.teamService.verifyUser(modifyPermissionDTO.memberId)
         await this.teamService.modifyPermissions(modifyPermissionDTO);
         return "Permission modification succeeded";
     }
@@ -97,7 +109,10 @@ export class TeamController{
     @ApiResponse({status:406, description: "Unable to access Invalid team."})
     async deleteUser(@Body() deleteUserDTO : TeamUserDTO):Promise<string>{
         // 팀 맴버 삭제
-        await this.teamService.deleteUser(deleteUserDTO);
+        const { teamId, memberId } = deleteUserDTO;
+        const team = await this.teamService.verifyTeam(teamId);
+        const user = await this.teamService.verifyUser(memberId);
+        await this.teamService.deleteUser(memberId, team, user);
         return "Team member delete success";
     }
 
