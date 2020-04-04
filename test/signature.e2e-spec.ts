@@ -105,7 +105,7 @@ describe('SIGNATURE', () => {
           .post("/signature")
           .set('Authorization', `Bearer ${ accessToken_2 }`)
           .send(teamSignDTO)
-          .expect(HttpStatus.NOT_ACCEPTABLE)
+          .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=> {
             expect(body.message).toEqual("Invalid access");
           });
@@ -214,7 +214,7 @@ describe('SIGNATURE', () => {
       return request(app.getHttpServer())
         .get(`/signature/${signId_Private}`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid access");
         });
@@ -241,7 +241,7 @@ describe('SIGNATURE', () => {
       return request(app.getHttpServer())
         .get(`/signature/${signId_Private}`)
         .set('Authorization', `Bearer ${ accessToken_3 }`)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid access");
         });
@@ -340,7 +340,7 @@ describe('SIGNATURE', () => {
       .delete("/signature")
       .set('Authorization', `Bearer ${ accessToken_2 }`)
       .send({signatureId : signId_Private})
-      .expect(HttpStatus.NOT_ACCEPTABLE)
+      .expect(HttpStatus.FORBIDDEN)
       .expect(({body})=> {
         expect(body.message).toEqual("Invalid access");
       });
@@ -353,7 +353,7 @@ describe('SIGNATURE', () => {
         .delete("/signature")
         .set('Authorization', `Bearer ${ accessToken_2 }`)
         .send({signatureId : signId_Team})
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual('Invalid access');
         })
@@ -365,7 +365,7 @@ describe('SIGNATURE', () => {
         .delete("/signature")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send({signatureId : (signId_Private+1)})
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid signature key");
         });
