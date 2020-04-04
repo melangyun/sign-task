@@ -32,3 +32,14 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# env
+#.env
+
+## file uploads
+uploads/*
+
+# docker
+
+/data
+/data/*
