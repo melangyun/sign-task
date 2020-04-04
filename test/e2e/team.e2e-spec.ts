@@ -8,16 +8,16 @@ import { CreateTeamDTO, DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from '
 describe('TEAM', () => {
 
   let app:INestApplication;
-  let accessToken_1:string;
-  let accessToken_2:string;
-  let accessToken_3:string;
+  let accessToken1:string;
+  let accessToken2:string;
+  let accessToken3:string;
 
   const register: RegisterDTO[] = [
     { id : "testuser", nickname:"test01", password : "1234"},
     { id : "testuser2", nickname:"test02", password : "1234"},
   ];
-  const login_1 : LoginDTO = { id : "testuser" , password : "1234" }
-  const login_2 : LoginDTO = { id : "testuser2" , password : "1234" }
+  const login1 : LoginDTO = { id : "testuser" , password : "1234" }
+  const login2 : LoginDTO = { id : "testuser2" , password : "1234" }
 
   beforeAll( async () => {
     const module = await Test.createTestingModule({
@@ -40,17 +40,17 @@ describe('TEAM', () => {
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
-        .send(login_1)
+        .send(login1)
         .then(({body}) => {
-            accessToken_1 = body.token;
+            accessToken1 = body.token;
         });
     
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
-        .send(login_2)
+        .send(login2)
         .then(({body}) => {
-            accessToken_2 = body.token;
+            accessToken2 = body.token;
         });
 
   });
@@ -90,7 +90,7 @@ describe('TEAM', () => {
       for( let i = 0 ; i < createteam.length ; i++ ){
         await request(app.getHttpServer())
           .post('/team')
-          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .set('Authorization', `Bearer ${ accessToken1 }`)
           .send(createteam[i])
           .expect(HttpStatus.CREATED)
           .expect(({body}) => {
@@ -107,7 +107,7 @@ describe('TEAM', () => {
     it("should get list of participating teams.", () => {
         return request(app.getHttpServer())
           .get('/team')
-          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .set('Authorization', `Bearer ${ accessToken1 }`)
           .expect(HttpStatus.OK)
           .expect(({body}) => {
             expect(body).toEqual({
@@ -142,7 +142,7 @@ describe('TEAM', () => {
     it("should return an empty array when has no join team.", () => {
       return request(app.getHttpServer())
         .get('/team')
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .expect(HttpStatus.OK)
         .expect(({body}) => {
           expect(body).toEqual({ teamsByLeader : [], teamsByMember:  []});
@@ -180,7 +180,7 @@ describe('TEAM', () => {
     it("should delete participating team", () => {
         return request(app.getHttpServer())
           .delete("/team")
-          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .set('Authorization', `Bearer ${ accessToken1 }`)
           .send(deleteTeamDTO)
           .expect(HttpStatus.OK)
           .expect(({body}) => {
@@ -192,7 +192,7 @@ describe('TEAM', () => {
     it("should not access to deleted team", () => {
       return request(app.getHttpServer())
         .delete("/team")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(deleteTeamDTO)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body}) => {
@@ -204,7 +204,7 @@ describe('TEAM', () => {
   it("Should not be inquired deleted teams", () => {
     return request(app.getHttpServer())
       .get('/team')
-      .set('Authorization', `Bearer ${ accessToken_1 }`)
+      .set('Authorization', `Bearer ${ accessToken1 }`)
       .expect(HttpStatus.OK)
       .expect(({body}) => {
         expect(body).not.toContain({
@@ -235,7 +235,7 @@ describe('TEAM', () => {
 
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=> {
           expect(body).toHaveProperty("id");
@@ -252,7 +252,7 @@ describe('TEAM', () => {
       const teamId = 1;
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Unable to access deleted team.");
@@ -275,7 +275,7 @@ describe('TEAM', () => {
       const teamId = 3;
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid teamId");
@@ -287,7 +287,7 @@ describe('TEAM', () => {
       const teamId = 2;
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
@@ -314,7 +314,7 @@ describe('TEAM', () => {
       const teamId = 1;
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Unable to access deleted team.");
@@ -326,7 +326,7 @@ describe('TEAM', () => {
       const teamId = 2;
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user`)
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
@@ -338,7 +338,7 @@ describe('TEAM', () => {
       const teamId = 2;
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=> {
           expect(body.length >= 1 ).toBeTruthy();
@@ -361,7 +361,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId: 100, memberId: "testuser2" };
       await request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
@@ -369,11 +369,11 @@ describe('TEAM', () => {
         });
       
       // 없는 memberId
-      const teamUserDTO_1:TeamUserDTO = { teamId: 2, memberId: "testuser10" };
+      const teamUserDTO1:TeamUserDTO = { teamId: 2, memberId: "testuser10" };
       await request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send(teamUserDTO_1)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send(teamUserDTO1)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
@@ -385,7 +385,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId: 1, memberId: "testuser2" };
       return request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{
@@ -398,7 +398,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
       return request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=>{
@@ -411,7 +411,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId: 2, memberId: "testuser2" };
       return request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.CREATED)
         .expect(({text})=>{
@@ -430,7 +430,7 @@ describe('TEAM', () => {
       const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 100, memberId:"testuser2", auth };
       await request(app.getHttpServer())
         .patch("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(modifyPermissionDTO)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
@@ -438,12 +438,12 @@ describe('TEAM', () => {
         });
       
         //없는 아이디..
-      const modifyPermissionDTO_1:ModifyPermissionDTO = { teamId: 2, memberId:"invalidUser", auth };
+      const modifyPermissionDTO1:ModifyPermissionDTO = { teamId: 2, memberId:"invalidUser", auth };
 
       await request(app.getHttpServer())
         .patch("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send(modifyPermissionDTO_1)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send(modifyPermissionDTO1)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
@@ -455,7 +455,7 @@ describe('TEAM', () => {
       const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 1, memberId:"testuser2", auth };
       return request(app.getHttpServer())
         .patch("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(modifyPermissionDTO)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{
@@ -469,7 +469,7 @@ describe('TEAM', () => {
     it( "Should reject if not team leader", () => {
       return request(app.getHttpServer())
         .patch("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .send(modifyPermissionDTO)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=>{
@@ -482,7 +482,7 @@ describe('TEAM', () => {
     it("Should modify user signature auth", () => {
       return request(app.getHttpServer())
       .patch("/team/user")
-      .set('Authorization', `Bearer ${ accessToken_1 }`)
+      .set('Authorization', `Bearer ${ accessToken1 }`)
       .send(modifyPermissionDTO)
       .expect(HttpStatus.OK)
       .expect(({text})=>{
@@ -504,14 +504,14 @@ describe('TEAM', () => {
           .set("Accept", "application/json")
           .send(login)
           .then(({body})=> {
-            accessToken_3 = body.token;
+            accessToken3 = body.token;
           })
 
       const modifyPermissionDTO:ModifyPermissionDTO = { teamId: 2, memberId:"hong1234", auth };
 
       return await request(app.getHttpServer())
         .patch("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(modifyPermissionDTO)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
@@ -539,7 +539,7 @@ describe('TEAM', () => {
       const teamId = 2;
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user/auth`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=>{
           expect(body.auth).toHaveProperty("lookup");
@@ -553,7 +553,7 @@ describe('TEAM', () => {
         const teamId = 2;
         return request(app.getHttpServer())
           .get(`/team/${teamId}/user/auth`)
-          .set('Authorization', `Bearer ${ accessToken_3 }`)
+          .set('Authorization', `Bearer ${ accessToken3 }`)
           .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=>{
             expect(body.message).toEqual('Not on the team');
@@ -569,7 +569,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId : 10 , memberId : "testuser2" };
       await request(app.getHttpServer())
         .delete("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
@@ -577,12 +577,12 @@ describe('TEAM', () => {
         });
       
         //없는 아이디..
-    const teamUserDTO_1:TeamUserDTO = { teamId : 2 , memberId : "Holla" };
+    const teamUserDTO1:TeamUserDTO = { teamId : 2 , memberId : "Holla" };
 
       await request(app.getHttpServer())
         .delete("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send(teamUserDTO_1)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send(teamUserDTO1)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
@@ -595,7 +595,7 @@ describe('TEAM', () => {
     it( "Should reject if not team leader", () => {
         return request(app.getHttpServer())
           .delete("/team/user")
-          .set('Authorization', `Bearer ${ accessToken_3 }`)
+          .set('Authorization', `Bearer ${ accessToken3 }`)
           .send(teamUserDTO)
           .expect(HttpStatus.UNAUTHORIZED)
           .expect(({body})=>{
@@ -607,7 +607,7 @@ describe('TEAM', () => {
     it( "Should delete user signature auth", () => {
       return request(app.getHttpServer())
         .delete("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.OK)
         .expect(({text})=>{
@@ -620,7 +620,7 @@ describe('TEAM', () => {
       const teamUserDTO:TeamUserDTO = { teamId : 2 , memberId : "testuser" };
       return request(app.getHttpServer())
         .delete("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamUserDTO)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{

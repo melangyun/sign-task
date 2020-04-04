@@ -3,26 +3,25 @@ import { Test } from '@nestjs/testing';
 import { TestModule } from "../test.module";
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { RegisterDTO, LoginDTO } from '../../src/modules/auth/auth.dto';
-import { CreateTeamDTO } from '../../src/modules/team/team.dto';
 
 describe('SIGNATURE', () => {
 
   let app:INestApplication;
-  let accessToken_1:string;
-  let accessToken_2:string;
-  let accessToken_3:string;
+  let accessToken1:string;
+  let accessToken2:string;
+  let accessToken3:string;
 
-  let signId_Private:string;
-  let signId_Team:string;
+  let signIdPrivate:string;
+  let signIdTeam:string;
 
   const register: RegisterDTO[] = [
     { id : "testuser", nickname:"test01", password : "1234"},
     { id : "testuser2", nickname:"test02", password : "1234"},
     { id : "testuser3", nickname:"test03", password : "1234"}
   ];
-  const login_1 : LoginDTO = { id : "testuser" , password : "1234" };
-  const login_2 : LoginDTO = { id : "testuser2" , password : "1234" };
-  const login_3 : LoginDTO = { id : "testuser3" , password : "1234" }
+  const login1 : LoginDTO = { id : "testuser" , password : "1234" };
+  const login2 : LoginDTO = { id : "testuser2" , password : "1234" };
+  const login3 : LoginDTO = { id : "testuser3" , password : "1234" }
 
   beforeAll( async () => {
     const module = await Test.createTestingModule({
@@ -45,50 +44,50 @@ describe('SIGNATURE', () => {
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
-        .send(login_1)
+        .send(login1)
         .then(({body}) => {
-            accessToken_1 = body.token;
+            accessToken1 = body.token;
         });
     
     // 유저 2
     await request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
-        .send(login_2)
+        .send(login2)
         .then(({body}) => {
-            accessToken_2 = body.token;
+            accessToken2 = body.token;
         });
     
     // 유저 3
     await request(app.getHttpServer())
       .post("/auth/login")
       .set("Accept", "application/json")
-      .send(login_3)
+      .send(login3)
       .then(({body}) => {
-          accessToken_3 = body.token;
+          accessToken3 = body.token;
       });
 
     // 팀 생성
     await request(app.getHttpServer())
         .post("/team")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send({name : "team01"})
   
     await request(app.getHttpServer())
         .post("/team")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send({name : "team02"})
 
     // 팀 삭제
     await request(app.getHttpServer())
         .delete("/team")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send({teamId : 2})
 
     // 맴버 초대
     await request(app.getHttpServer())
         .post("/team/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send({ teamId : 1 , memberId : "testuser2" })
   });
 
@@ -103,7 +102,7 @@ describe('SIGNATURE', () => {
         const teamSignDTO = { teamId : 1 , url : "example.jpg", desc : "team" };
         return request(app.getHttpServer())
           .post("/signature")
-          .set('Authorization', `Bearer ${ accessToken_2 }`)
+          .set('Authorization', `Bearer ${ accessToken2 }`)
           .send(teamSignDTO)
           .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=> {
@@ -116,7 +115,7 @@ describe('SIGNATURE', () => {
           const teamSignDTO = { teamId : 2 , url : "example.jpg", desc : "team" };
           return request(app.getHttpServer())
             .post("/signature")
-            .set('Authorization', `Bearer ${ accessToken_1 }`)
+            .set('Authorization', `Bearer ${ accessToken1 }`)
             .send(teamSignDTO)
             .expect(HttpStatus.FORBIDDEN)
             .expect(({body})=> {
@@ -129,7 +128,7 @@ describe('SIGNATURE', () => {
       const singleSignDTO = { teamId : 100 , url : "example.jpg", desc : "private" };
       return request(app.getHttpServer())
         .post("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(singleSignDTO)
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
@@ -155,24 +154,24 @@ describe('SIGNATURE', () => {
       const singleSignDTO = { teamId : null , url : "example.jpg", desc : "team" };
       await request(app.getHttpServer())
         .post("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(singleSignDTO)
         .expect(HttpStatus.CREATED)
         .expect(({body})=> {
           expect(body).toHaveProperty("registeredId");
-          signId_Private = body.registeredId;
+          signIdPrivate = body.registeredId;
         });
 
       //팀 서명
       const teamSignDTO = { teamId : 1 , url : "example.jpg", desc : "private" };
       await request(app.getHttpServer())
         .post("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .send(teamSignDTO)
         .expect(HttpStatus.CREATED)
         .expect(({body})=> {
           expect(body).toHaveProperty("registeredId");
-          signId_Team = body.registeredId;
+          signIdTeam = body.registeredId;
         });
     })
   });
@@ -182,7 +181,7 @@ describe('SIGNATURE', () => {
     it("Bringing in a Personal Signature", ()=> {
       return request(app.getHttpServer())
         .get("/signature/user")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=> {
           expect(body.length >= 1 ).toBeTruthy();
@@ -212,8 +211,8 @@ describe('SIGNATURE', () => {
     // 개인 서명을 다른사람이 접근할때 reject
     it("Personal signatures are not visible to others", ()=> {
       return request(app.getHttpServer())
-        .get(`/signature/${signId_Private}`)
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
+        .get(`/signature/${signIdPrivate}`)
+        .set('Authorization', `Bearer ${ accessToken2 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid access");
@@ -223,8 +222,8 @@ describe('SIGNATURE', () => {
      // 성공적으로 개인 서명을 가져옴
     it("Successfully get personal signatures", ()=> {
       return request(app.getHttpServer())
-        .get(`/signature/${signId_Private}`)
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
+        .get(`/signature/${signIdPrivate}`)
+        .set('Authorization', `Bearer ${ accessToken1 }`)
         .expect(HttpStatus.OK)
         .expect(({body})=> {
           expect(body).toHaveProperty("create_at");
@@ -239,8 +238,8 @@ describe('SIGNATURE', () => {
     // 팀 서명을 소속되지 않은 사람이 접근할때 reject
     it("Personal signatures are not visible to others", ()=> {
       return request(app.getHttpServer())
-        .get(`/signature/${signId_Private}`)
-        .set('Authorization', `Bearer ${ accessToken_3 }`)
+        .get(`/signature/${signIdPrivate}`)
+        .set('Authorization', `Bearer ${ accessToken3 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid access");
@@ -250,7 +249,7 @@ describe('SIGNATURE', () => {
     // 토큰 없이는 reject
     it("Should be rejected without a token", ()=> {
       return request(app.getHttpServer())
-        .get(`/signature/${signId_Private}`)
+        .get(`/signature/${signIdPrivate}`)
         .expect(HttpStatus.UNAUTHORIZED)
         .expect(({body})=> {
           expect(body.message).toEqual("Unauthorized");
@@ -260,8 +259,8 @@ describe('SIGNATURE', () => {
     // 성공적으로 팀 서명을 가져옴
     it("Successfully get team signatures.", ()=> {
     return request(app.getHttpServer())
-      .get(`/signature/${signId_Team}`)
-      .set('Authorization', `Bearer ${ accessToken_1 }`)
+      .get(`/signature/${signIdTeam}`)
+      .set('Authorization', `Bearer ${ accessToken1 }`)
       .expect(HttpStatus.OK)
       .expect(({body})=> {
         expect(body).toHaveProperty("create_at");
@@ -292,7 +291,7 @@ describe('SIGNATURE', () => {
     it("Team signatures are not visible to others", ()=> {
       return request(app.getHttpServer())
         .get(`/signature/team/${teamId}`)
-        .set('Authorization', `Bearer ${ accessToken_3 }`)
+        .set('Authorization', `Bearer ${ accessToken3 }`)
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
@@ -302,7 +301,7 @@ describe('SIGNATURE', () => {
       it("Successfully get team signatures", () => {
         return request(app.getHttpServer())
           .get(`/signature/team/${teamId}`)
-          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .set('Authorization', `Bearer ${ accessToken1 }`)
           .expect(HttpStatus.OK)
           .expect(({body})=> {
             const sign = body[0];
@@ -320,8 +319,8 @@ describe('SIGNATURE', () => {
       it("should not access to deleted team", ()=> {
         const deletedTeamId = 2; 
         return request(app.getHttpServer())
-          .get(`/signature/team/${2}`)
-          .set('Authorization', `Bearer ${ accessToken_1 }`)
+          .get(`/signature/team/${deletedTeamId}`)
+          .set('Authorization', `Bearer ${ accessToken1 }`)
           .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=> {
             expect(body.message).toEqual("Unable to access deleted team.");
@@ -338,8 +337,8 @@ describe('SIGNATURE', () => {
     it("shoul be rejected when the others access to signature", () => {
       return request(app.getHttpServer())
       .delete("/signature")
-      .set('Authorization', `Bearer ${ accessToken_2 }`)
-      .send({signatureId : signId_Private})
+      .set('Authorization', `Bearer ${ accessToken2 }`)
+      .send({signatureId : signIdPrivate})
       .expect(HttpStatus.FORBIDDEN)
       .expect(({body})=> {
         expect(body.message).toEqual("Invalid access");
@@ -351,8 +350,8 @@ describe('SIGNATURE', () => {
     it("Should be rejected when requested by unauthorized user (team signature)", () => {
       return request(app.getHttpServer())
         .delete("/signature")
-        .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .send({signatureId : signId_Team})
+        .set('Authorization', `Bearer ${ accessToken2 }`)
+        .send({signatureId : signIdTeam})
         .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual('Invalid access');
@@ -363,8 +362,8 @@ describe('SIGNATURE', () => {
     it("Invalid signature key", () => {
       return request(app.getHttpServer())
         .delete("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send({signatureId : (signId_Private+1)})
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send({signatureId : (signIdPrivate+1)})
         .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid signature key");
@@ -375,8 +374,8 @@ describe('SIGNATURE', () => {
     it("Successfully delete Signature (private)", () => {
       return request(app.getHttpServer())
         .delete("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send({signatureId : signId_Private})
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send({signatureId : signIdPrivate})
         .expect(HttpStatus.OK)
     });
     
@@ -384,8 +383,8 @@ describe('SIGNATURE', () => {
     it("Successfully delete Signature (team)", () => {
       return request(app.getHttpServer())
         .delete("/signature")
-        .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .send({signatureId : signId_Team})
+        .set('Authorization', `Bearer ${ accessToken1 }`)
+        .send({signatureId : signIdTeam})
         .expect(HttpStatus.OK)
     });
   });

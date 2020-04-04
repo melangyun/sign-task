@@ -6,8 +6,9 @@ import { Payload } from "../../src/modules/auth/payload.type";
 import { UserService } from "../../src/modules/user/user.service";
 import { RegisterDTO } from "../../src/modules/auth/auth.dto";
 import { User } from "../../src/modules/user/user.entity";
+import { getConnection } from "typeorm";
 
-describe("AppController", () => {
+describe("UserServoce", () => {
     let authController:AuthController;
     let authService:AuthService;
     let userService: UserService;
@@ -26,8 +27,29 @@ describe("AppController", () => {
       });
     
     describe("UserService", () => {
-        it("create - Should be registered member", () => {
-            const typeormSpy = jest.spyOn(typeorm, "findOne")
+
+        it("create - Should be registered member", async () => {
+            const result:User = await userService.create(registerDTO_1);
+            const { id, password } =  registerDTO_1;
+
+            expect(result).toHaveProperty("id" , id);
+            expect(result).toHaveProperty("nickname" , "user01" );
+            expect(result).not.toHaveProperty("password");
+
+            const user:User = await User.findOne(id);
+            expect(user.id).toEqual(id);
+            expect(user.password).not.toEqual(password);
+            
+        });
+        it("finByLogin - Should be registered member", () => {
+           
+        });
+        it("searchUser - Should be registered member", () => {
+           
+        });
+
+        it("searchUser - Should be registered member", () => {
+           
         });
 
     });

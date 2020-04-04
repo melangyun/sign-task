@@ -57,14 +57,14 @@ describe('AUTH', () => {
   describe("/auth/login (POST)", () => {
 // 로그인 -> 토큰을 발급받음
     it("should login" , () => {
-      const user : LoginDTO = { id : "testuser" , password : "1234" }
+      const user : LoginDTO = { id : "testUser" , password : "1234" }
       return request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
         .send(user)
         .expect(({body})=> {
           expect(body.token).toBeDefined();
-          expect(body.payload.id).toEqual("testuser");
+          expect(body.payload.id).toEqual("testUser");
           expect(body.payload.nickname).toEqual("test01");
           expect(body.payload.password).toBeUndefined();
        })
@@ -73,7 +73,7 @@ describe('AUTH', () => {
 
       // 로그인 -> 아이디 또는 비밀번호를 틀렸을 때
     it("should not login" , () => {
-      const user : LoginDTO = { id : "testuser" , password : "01234" }
+      const user : LoginDTO = { id : "testUser" , password : "01234" }
       return request(app.getHttpServer())
         .post("/auth/login")
         .set("Accept", "application/json")
