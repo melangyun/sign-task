@@ -18,8 +18,7 @@ export class SignatureController{
 
     @Post()
     @ApiResponse({status:200, description:"Successfully adding Signature"})
-    @ApiResponse({status:400, description:"Invalid teamId"})
-    @ApiResponse({status:406, description: "Unable to access deleted team."})
+    @ApiResponse({status:403, description: "Unable to access."})
     async addSignature( @Body() signDTO:SignDTO, @AuthUser() authUser:User):Promise<object>{
         //서명 등록
         const { teamId } = signDTO;
@@ -40,7 +39,7 @@ export class SignatureController{
     
     @Get("team/:teamId")
     @ApiResponse({status:201, description:"Successfully get Signature"})
-    @ApiResponse({status:406, description:"No Access for the team"})
+    @ApiResponse({status:403, description:"No Access for the team"})
     async geTeamSigns(@Param("teamId") teamId:number ,@AuthUser() authUser:User):Promise<Signature[]>{
         await this.signatureService.validateUserAuth( teamId, authUser.id, signatureAuth.lookup )
         return await this.signatureService.getSigns( authUser.id, teamId );
@@ -48,8 +47,8 @@ export class SignatureController{
 
     @Get("/:signId")
     @ApiResponse({status:200, description:"Successfully get Signature"})
-    @ApiResponse({status:400, description:"Invalid signature key"})
-    @ApiResponse({status:406, description:"No Access for the signature"})
+    @ApiResponse({status:404, description:"Invalid signature key"})
+    @ApiResponse({status:403, description:"No Access for the signature"})
     async getSignatures(@Param("signId") signId:string, @AuthUser() authUser:User):Promise<object>{
         // 서명 아이디로 서명 반환
         const { id } = authUser;
@@ -58,8 +57,8 @@ export class SignatureController{
 
     @Delete()
     @ApiResponse({status:200, description:"Successfully delete Signature"})
-    @ApiResponse({status:400, description:"Invalid signature key"})
-    @ApiResponse({status:406, description:"No Access for the signature"})
+    @ApiResponse({status:404, description:"Invalid signature key"})
+    @ApiResponse({status:403, description:"No Access for the signature"})
     async deleteSignature(@Body() deleteSignDTO :DeleteSignDTO, @AuthUser() authUser:User):Promise<string>{
         // 서명 삭제
         const { signatureId } = deleteSignDTO;

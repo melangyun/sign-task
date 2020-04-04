@@ -21,7 +21,7 @@ export class SignatureService {
         await this.teamService.verifyTeam(teamId);
         const teamUser:TeamUser = await this.teamService.getTeamUser(teamId, userId);
         if ( !teamUser || ( teamUser && !teamUser.auth[inquiry]) ){
-            throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Invalid access', HttpStatus.FORBIDDEN );
         }
     }
 
@@ -53,7 +53,7 @@ export class SignatureService {
 
         if( !sign ){
             // 일단 서명을 꺼내고, 없으면 키가 일치하지 않음을 알림
-            throw new HttpException('Invalid signature key', HttpStatus.BAD_REQUEST );
+            throw new HttpException('Invalid signature key', HttpStatus.NOT_FOUND );
         }
 
         if( sign.teamId ){ 
@@ -61,7 +61,7 @@ export class SignatureService {
             await this.validateUserAuth(sign.teamId , userId, key );
         } else if ( sign.userId !== userId ) {
             // 개인의 서명이라면, 본인이 등록한 서명이 맞는지 검사함 
-            throw new HttpException('Invalid access', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Invalid access', HttpStatus.FORBIDDEN );
         }
 
         return sign;
