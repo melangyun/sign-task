@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
 import { Repository, UpdateResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
-import { DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { DeleteTeamDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
 

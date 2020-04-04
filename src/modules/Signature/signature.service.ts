@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectRepository, } from "@nestjs/typeorm";
 import { Signature } from "./signature.entity";
 import { Repository, UpdateResult } from "typeorm";
-import { SignDTO, DeleteSignDTO } from "./signature.dto";
+import { SignDTO } from "./signature.dto";
 import { Team } from "../team/team.entity";
 import { User } from "../user/user.entity";
 import { TeamService } from "../team/team.service";
@@ -52,7 +52,7 @@ export class SignatureService {
         const sign:any = rowDataPacket[0];
 
         if( !sign ){
-            // 일단 서명을 꺼내고, 없으면 키가 일치하지 않음.
+            // 일단 서명을 꺼내고, 없으면 키가 일치하지 않음을 알림
             throw new HttpException('Invalid signature key', HttpStatus.BAD_REQUEST );
         }
 
