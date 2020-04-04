@@ -38,3 +38,8 @@ lerna-debug.log*
 
 ## file uploads
 uploads/*
+
+# docker
+
+/data
+/data/*
