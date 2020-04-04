@@ -194,7 +194,7 @@ describe('TEAM', () => {
         .delete("/team")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(deleteTeamDTO)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body}) => {
            expect(body.message).toEqual("Unable to access deleted team.");
         });
@@ -253,7 +253,7 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Unable to access deleted team.");
         });
@@ -276,7 +276,7 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=> {
           expect(body.message).toEqual("Invalid teamId");
         });
@@ -288,7 +288,7 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
         });
@@ -315,7 +315,7 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user`)
         .set('Authorization', `Bearer ${ accessToken_1 }`)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Unable to access deleted team.");
         });
@@ -327,7 +327,7 @@ describe('TEAM', () => {
       return request(app.getHttpServer())
         .get(`/team/${teamId}/user`)
         .set('Authorization', `Bearer ${ accessToken_2 }`)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=> {
           expect(body.message).toEqual("Not on the team");
         });
@@ -363,7 +363,7 @@ describe('TEAM', () => {
         .post("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid teamId");
         });
@@ -374,7 +374,7 @@ describe('TEAM', () => {
         .post("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO_1)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
         });
@@ -387,7 +387,7 @@ describe('TEAM', () => {
         .post("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{
           expect(body.message).toEqual("Unable to access deleted team.");
         });
@@ -432,7 +432,7 @@ describe('TEAM', () => {
         .patch("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(modifyPermissionDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid teamId");
         });
@@ -444,7 +444,7 @@ describe('TEAM', () => {
         .patch("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(modifyPermissionDTO_1)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
         });
@@ -457,7 +457,7 @@ describe('TEAM', () => {
         .patch("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(modifyPermissionDTO)
-        .expect(HttpStatus.NOT_ACCEPTABLE)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{
           expect(body.message).toEqual("Unable to access deleted team.");
         });
@@ -513,7 +513,7 @@ describe('TEAM', () => {
         .patch("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(modifyPermissionDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid teamMember");
         });
@@ -554,7 +554,7 @@ describe('TEAM', () => {
         return request(app.getHttpServer())
           .get(`/team/${teamId}/user/auth`)
           .set('Authorization', `Bearer ${ accessToken_3 }`)
-          .expect(HttpStatus.BAD_REQUEST)
+          .expect(HttpStatus.FORBIDDEN)
           .expect(({body})=>{
             expect(body.message).toEqual('Not on the team');
           });
@@ -571,7 +571,7 @@ describe('TEAM', () => {
         .delete("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid teamId");
         });
@@ -583,7 +583,7 @@ describe('TEAM', () => {
         .delete("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO_1)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .expect(({body})=>{
           expect(body.message).toEqual("Invalid user");
         });
@@ -622,7 +622,7 @@ describe('TEAM', () => {
         .delete("/team/user")
         .set('Authorization', `Bearer ${ accessToken_1 }`)
         .send(teamUserDTO)
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.FORBIDDEN)
         .expect(({body})=>{
           expect(body.message).toEqual("Can't delete TeamLeader");
         });
