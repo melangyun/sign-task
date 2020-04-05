@@ -169,11 +169,29 @@ describe("TeamService", () => {
     });
 
     describe("getTeamUser (METHOD)", () => {
+        it("should reject the invalid user", () => {
+            const memberId = "invalid user";
+            const teamId = 1;
+            teamService.getTeamUser(teamId, memberId).catch(({status, message}) => {
+                expect(status).toEqual(403);
+                expect(message).toEqual("Not on the team");
+            });
+        });
 
-    });
+        it("should return teamUser information", async () => {
+            const memberId = "member";
+            const teamId = 1;
+            const teamMember:TeamUser = await teamService.getTeamUser(teamId, memberId);
 
-    describe("getUsers (METHOD)", () => {
+            const team = new Team();
+            team.id = teamId;
+            const user = new User();
+            user.id = memberId;
 
+            const teamUser:TeamUser = await TeamUser.findOne({team, user});
+            expect(JSON.stringify(teamUser.auth)).toEqual(JSON.stringify(teamMember.auth));
+            expect(teamMember.createAt).toEqual(teamUser.createAt);
+        });
     });
 
     describe("deleteUser (METHOD)", () => {
