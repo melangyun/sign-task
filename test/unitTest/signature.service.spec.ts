@@ -158,26 +158,6 @@ describe("TeamService", () => {
             expect(result).toHaveProperty("is_active");
             expect(result.id).toEqual(personalSignId);
         });
-/*
-        it("Should successfully get team signatures", async () => {
-            // console.log("이게 안되는 키 ㅠㅠTestCase : ",teamSignId)
-            // const reuslt = await User.findOne({id : "admin"});
-            // console.log("reuslt : ",reuslt);
-            // const team = await Team.findOne({id:1});
-            // console.log("team : ", team);
-            // const teamUser = await TeamUser.findOne({user:reuslt, team});
-            // console.log("teamUser : 나오니 왜 안나오니 ",teamUser);
-             // ???????????추후 디버깅...
-
-            const result:any = await signatureService.validateSignId( teamSignId , "admin" , signatureAuth.lookup);
-            expect(result).toHaveProperty("create_at");
-            expect(result).toHaveProperty("update_at");
-            expect(result).toHaveProperty("desc");
-            expect(result).toHaveProperty("url");
-            expect(result).toHaveProperty("is_active");
-            expect(result.id).toEqual(teamSignId);
-        });
-*/
     });
 
 
