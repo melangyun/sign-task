@@ -61,7 +61,7 @@ describe("UserService", () => {
         
         it("finByLogin - login fail : Should be throw error", async () => {
             const userDTO:LoginDTO = {id :"abcd", password : "1234"};
-            await userService.findByLogin(userDTO)
+            userService.findByLogin(userDTO)
                 .catch(({status, message}) =>{
                     expect(status).toEqual(401);
                     expect(message).toEqual("Invalid credential");
@@ -88,7 +88,7 @@ describe("UserService", () => {
          });
 
         it("verifyUser - invalid Id", async () => {
-           await userService.verifyUser("abcd")
+           userService.verifyUser("abcd")
            .catch(({status, message}) =>{
                 expect(status).toEqual(404);
                 expect(message).toEqual("Invalid user");
@@ -96,7 +96,7 @@ describe("UserService", () => {
         });
 
         it("verifyUser - deleted user", async () => {
-            await userService.verifyUser("deleteUser")
+            userService.verifyUser("deleteUser")
             .catch(({status, message}) =>{
                  expect(status).toEqual(403);
                  expect(message).toEqual("Unable to access deleted member.");

@@ -56,11 +56,34 @@ describe("TeamService", () => {
     });
 
     describe("verifyTeam (METHOD)", () => {
+        it("should be reject deleted team", async () => {
+            const id = 2;
+            teamService.verifyTeam(id).catch(({status, message}) => {
+                expect(status).toEqual(403);
+                expect(message).toEqual('Unable to access deleted team.');
+            })
+        });
 
+        it("should be reject Invalid team", async () => {
+            const id = 100;
+            teamService.verifyTeam(id).catch(({status, message}) => {
+                expect(status).toEqual(404);
+                expect(message).toEqual('Invalid teamId');
+            });
+        });
+
+        it("should be return correct team", async () => {
+            const id = 1;
+            const team:Team = await teamService.verifyTeam(id);
+            const foundTeam = await Team.findOne({id});
+            expect(team.id).toEqual(foundTeam.id);
+            expect(team.name).toEqual(foundTeam.name);
+            
+        });
     });
     
     describe("verifyUser (METHOD)", () => {
-
+        
     });
 
 
