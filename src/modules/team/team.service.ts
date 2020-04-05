@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
 import { Repository, UpdateResult } from "typeorm";
 import { TeamUser } from "./teamuser.entity";
-import { DeleteTeamDTO, TeamUserDTO, ModifyPermissionDTO } from "./team.dto";
+import { DeleteTeamDTO, ModifyPermissionDTO } from "./team.dto";
 import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
 
@@ -22,14 +22,18 @@ export class TeamService{
         const team:Team = await this.teamRepository.findOne({id: teamId});
 
         if( !team ){
-            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamId", HttpStatus.NOT_FOUND);
         }
 
         if( !team.isActive ){
-            throw new HttpException('Unable to access deleted team.', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Unable to access deleted team.', HttpStatus.FORBIDDEN );
           }
 
         return team;
+    }
+
+    async verifyUser(userId:string):Promise<User>{
+        return await this.userService.verifyUser(userId);
     }
 
     // 팀 생성
@@ -60,34 +64,23 @@ export class TeamService{
         const { teamId } = deleteTeamDTO;
         const result:UpdateResult = await this.teamRepository.update(teamId , {isActive : false}) ;
         if (!result.raw.changedRows) {
-            throw new HttpException("Invalid teamId", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamId", HttpStatus.NOT_FOUND);
         }
 
         return result.raw.message;
     }
 
     // 팀 - 유저 추가
-    async addUser(addUserDTO : TeamUserDTO):Promise<void> {
-        const { teamId, memberId } = addUserDTO;
-        await this.userService.verifyUser(memberId);
-
-        const addUser = new User();
-        addUser.id = memberId;
-
-        const team = new Team();
-        team.id = teamId;
-
+    async addUser( team :Team, user :User):Promise<void> {
         const teamUser = new TeamUser();
         teamUser.team = team;
-        teamUser.user = addUser;
-    
+        teamUser.user = user;
         await this.teamUserRepository.save(teamUser);
     }
 
     // 유저 권한 수정
     async modifyPermissions(modifyPermissionDTO : ModifyPermissionDTO){
         const { teamId , memberId, auth } = modifyPermissionDTO;
-        await this.userService.verifyUser(memberId);
 
         const team = new Team();
         team.id = teamId;
@@ -97,12 +90,13 @@ export class TeamService{
 
         const result:UpdateResult = await this.teamUserRepository.update({ team, user }, { auth })
         if(!result.raw.changedRows){
-            throw new HttpException("Invalid teamMember", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid teamMember", HttpStatus.NOT_FOUND);
         }
+        return result.raw.message;
     }
 
     // 리더로서 참가하는 팀
-    async findAllmyTeam(id: string):Promise<Team[]> {
+    async findAllMyTeam(id: string):Promise<Team[]> {
         return await this.teamRepository.find({
             select : ["id", "name", "leader"],
             where: { leader : id , isActive : true }
@@ -121,9 +115,7 @@ export class TeamService{
     }
 
     // 팀 아이디를 받아 맴버 아이디, 닉네임, 권한을 돌려줌
-    async getUsers(teamId:number, userId:string):Promise<TeamUser[]>{
-        await this.verifyTeam(teamId);
-        await this.getTeamUser(teamId, userId)
+    async getUsers(teamId:number):Promise<TeamUser[]>{
         return await this.teamUserRepository.createQueryBuilder("team_user")
             .select(["team_user.auth","user.id" , "user.nickname"])
             .where("team_user.teamId = :id", { id : teamId })
@@ -133,35 +125,25 @@ export class TeamService{
     }
 
     // 팀 맴버로서 유저 삭제
-    async deleteUser(deleteUserDTO : TeamUserDTO){
-        const { teamId, memberId } = deleteUserDTO;
-        await this.userService.verifyUser(memberId);
-        const team = await this.verifyTeam(teamId);
-
+    async deleteUser( memberId :string, team : Team, user : User) {
+        
         if( team.leader === memberId ){
-            throw new HttpException("Can't delete TeamLeader", HttpStatus.BAD_REQUEST );
+            throw new HttpException("Can't delete TeamLeader", HttpStatus.FORBIDDEN );
         }
 
-        const user = new User();
-        user.id = memberId;
-        
         await this.teamUserRepository.delete({user, team});   
     }
 
     // 유저 상세정보(권한 가입일 등) 을 리턴함
     async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
-        // await this.userService.verifyUser(userId);
-        await this.verifyTeam(teamId);
-
         const user = new User();
         user.id = userId;
         const team = new Team();
         team.id = teamId;
 
         const result:TeamUser = await this.teamUserRepository.findOne({user , team});
-        
         if(!result){
-            throw new HttpException("Not on the team", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Not on the team", HttpStatus.FORBIDDEN);
         }
         
         return result;

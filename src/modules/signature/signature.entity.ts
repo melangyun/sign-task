@@ -1,9 +1,9 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { User } from "../user/user.entity"
 import { Team } from '../team/team.entity';
 
 @Entity()
-export class Signature {
+export class Signature extends BaseEntity{
 
 @PrimaryGeneratedColumn("uuid")
 id!: string;

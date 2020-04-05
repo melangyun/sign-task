@@ -1,10 +1,10 @@
-import { Entity, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
 import { User } from "../user/user.entity";
 import { TeamUser } from "./teamuser.entity";
-import { Signature } from '../Signature/signature.entity';
+import { Signature } from '../signature/signature.entity';
 
 @Entity()
-export class Team {
+export class Team extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id!: number;

@@ -3,7 +3,7 @@ import { AppController } from '../src/modules/app.controller';
 import { AppService } from '../src/modules/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../src/modules/user/user.module';
-import { SignatureModule } from "../src/modules/Signature/signature.module";
+import { SignatureModule } from "../src/modules/signature/signature.module";
 import { TeamModule } from "../src/modules/team/team.module";
 import { Connection } from 'typeorm';
 import { AuthModule } from '../src/modules/auth/auth.module';

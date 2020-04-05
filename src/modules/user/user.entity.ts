@@ -1,10 +1,10 @@
-import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Signature } from "../Signature/signature.entity";
+import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
+import { Signature } from "../signature/signature.entity";
 import { Team } from "../team/team.entity";
 import { TeamUser } from "../team/teamuser.entity";
 
 @Entity()
-export class User {
+export class User extends BaseEntity{
 
 @PrimaryColumn({type : "varchar"})
 id!: string;
@@ -16,7 +16,7 @@ nickname!: string;
 password!: string;
 
 @Column({name:"is_active",type:"varchar", nullable:false, default: true})
-isActive!: string;
+isActive!: boolean;
 
 @Column({type:"varchar", nullable:true})
 refreshToken!: string;

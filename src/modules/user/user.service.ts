@@ -63,14 +63,14 @@ export class UserService {
     }
 
     // 유저 확인 :  1. 아이디 검사 2. 탈퇴 유저인지 검사 
-    async verifyUser(id:string){
+    async verifyUser(id:string):Promise<User>{
         const user:User = await this.userRepository.findOne({id});
         if( !user ){
-            throw new HttpException("Invalid user", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Invalid user", HttpStatus.NOT_FOUND);
         }
         
         if( !user.isActive ){
-            throw new HttpException('Unable to access deleted member.', HttpStatus.NOT_ACCEPTABLE );
+            throw new HttpException('Unable to access deleted member.', HttpStatus.FORBIDDEN );
         }
         
         return this.sanitizeUser(user);
