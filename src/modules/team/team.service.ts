@@ -92,6 +92,7 @@ export class TeamService{
         if(!result.raw.changedRows){
             throw new HttpException("Invalid teamMember", HttpStatus.NOT_FOUND);
         }
+        return result.raw.message;
     }
 
     // 리더로서 참가하는 팀

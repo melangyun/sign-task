@@ -5,6 +5,7 @@ import { User } from '../../src/modules/user/user.entity';
 import { Team } from '../../src/modules/team/team.entity';
 import { TeamUser } from '../../src/modules/team/teamuser.entity';
 import { signatureAuth } from '../../src/modules/signature/signature.enum';
+import { ModifyPermissionDTO } from 'src/modules/team/team.dto';
 
 
 describe("TeamService", () => {
@@ -137,10 +138,39 @@ describe("TeamService", () => {
     });
 
     describe("modifyPermissions (METHOD)", () => {
+        it("should reject Invalid teamMember", () =>{
+            const memberId = "invalid user";
+            const modifyPermissionDTO:ModifyPermissionDTO = { teamId : 1, memberId, auth: {add : true, delete: true, lookup:true} };
+            teamService.modifyPermissions(modifyPermissionDTO).catch(({status, message}) => {
+                expect(status).toEqual(404);
+                expect(message).toEqual("Invalid teamMember");
+            });
+        });
 
+        it("should change success", async () =>{
+            const memberId = "member";
+            const teamId = 1;
+            const auth =  {add : true, delete: true, lookup:true};
+
+            const modifyPermissionDTO:ModifyPermissionDTO = { teamId, memberId, auth };
+            const result:string = await teamService.modifyPermissions(modifyPermissionDTO);
+            expect(typeof result).toEqual("string");
+
+            const team = new Team();
+            team.id = teamId;
+            const user = new User();
+            user.id = memberId;
+
+            const teamUser:TeamUser = await TeamUser.findOne({team, user});
+            expect(teamUser.auth).toHaveProperty(signatureAuth.add, true);
+            expect(teamUser.auth).toHaveProperty(signatureAuth.delete, true);
+            expect(teamUser.auth).toHaveProperty(signatureAuth.lookup, true);
+        });
     });
 
+    describe("getTeamUser (METHOD)", () => {
 
+    });
 
     describe("getUsers (METHOD)", () => {
 
@@ -150,8 +180,5 @@ describe("TeamService", () => {
 
     });
 
-    describe("getTeamUser (METHOD)", () => {
-
-    });
 
 })
