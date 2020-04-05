@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
-import { Signature } from "../Signature/signature.entity";
+import { Signature } from "../signature/signature.entity";
 import { Team } from "../team/team.entity";
 import { TeamUser } from "../team/teamuser.entity";
 

@@ -23,7 +23,7 @@ describe('AUTH', () => {
     await app.close();
   });
 
-  const user: RegisterDTO = { id : "testuser", nickname:"test01", password : "1234"};
+  const user: RegisterDTO = { id : "testUser", nickname:"test01", password : "1234"};
 
   describe("/auth/register (POST)", () => {
   // 회원가입
@@ -33,7 +33,7 @@ describe('AUTH', () => {
         .set("Accept", "application/json")
         .send(user)
         .expect(({body})=> {
-          expect(body.id).toEqual("testuser");
+          expect(body.id).toEqual("testUser");
           expect(body.nickname).toEqual("test01");
           expect(body.password).toBeUndefined();
         })

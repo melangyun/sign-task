@@ -48,9 +48,9 @@ export class SignatureService {
     async validateSignId( signId:string, userId:string, key:string ):Promise<object> {
         const rowDataPacket:Array<any> =  await this.signatureRepository.
             query(`select * from signature where is_active = true and id = "${signId}"`)
-    
         const sign:any = rowDataPacket[0];
-
+        // console.log("service : ", signId, "\nsign : ", sign)
+        
         if( !sign ){
             // 일단 서명을 꺼내고, 없으면 키가 일치하지 않음을 알림
             throw new HttpException('Invalid signature key', HttpStatus.NOT_FOUND );
