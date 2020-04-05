@@ -136,14 +136,12 @@ export class TeamService{
 
     // 유저 상세정보(권한 가입일 등) 을 리턴함
     async getTeamUser(teamId:number, userId:string):Promise<TeamUser>{
-
         const user = new User();
         user.id = userId;
         const team = new Team();
         team.id = teamId;
 
         const result:TeamUser = await this.teamUserRepository.findOne({user , team});
-        
         if(!result){
             throw new HttpException("Not on the team", HttpStatus.FORBIDDEN);
         }
