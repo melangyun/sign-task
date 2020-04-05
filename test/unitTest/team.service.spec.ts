@@ -1,9 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { TestModule } from '../test.module';
-import { TeamService } from 'src/modules/team/team.service';
-import { User } from 'src/modules/user/user.entity';
-
-
+import { TeamService } from '../../src/modules/team/team.service';
+import { User } from '../../src/modules/user/user.entity';
+import { Team } from '../../src/modules/team/team.entity';
 
 
 describe("TeamService", () => {
@@ -25,7 +24,37 @@ describe("TeamService", () => {
         await user.save()
         
       });
+
+    describe("create (METHOD)", () => {
+       
+        it("should be successfully create", async () => {
+            const teamId:number = await teamService.create("화이팀", "admin");
+            expect(teamId > 0 ).toBeTruthy();
+            const team:Team = await Team.findOne({id : teamId});
+            expect(team).toBeDefined();
+            expect(team.id).toEqual(teamId);
+       });
+
+       it("Should be successful if created with the same name", async () => {
+            const teamId:number = await teamService.create("화이팀", "admin");
+            expect(teamId > 0 ).toBeTruthy();
+            const team:Team = await Team.findOne({id : teamId});
+            expect(team).toBeDefined();
+            expect(team.id).toEqual(teamId);
+         });
+    });
     
+    describe("deleteTeam (METHOD)", () => {
+        it("should delete team successfully", async () => {
+            const id = 2;
+            const result:string = await teamService.deleteTeam({ teamId : id});
+            expect(typeof result).toBe("string");
+
+            const team = await Team.findOne({id});
+            expect(team.isActive).toBeFalsy();
+        });
+    });
+
     describe("verifyTeam (METHOD)", () => {
 
     });
@@ -34,13 +63,7 @@ describe("TeamService", () => {
 
     });
 
-    describe("create (METHOD)", () => {
 
-    });
-
-    describe("deleteTeam (METHOD)", () => {
-
-    });
 
     describe("addUser (METHOD)", () => {
 
