@@ -1,15 +1,12 @@
 # Signature shared Program Server Code For coding test
 <br>
-<br>
-<br>
 
 개인 서명을 저장하고, 팀을 만들어 팀 내에서 공유하기 위한 서비스 입니다.
 <br>
-<br>
+
 
 
 ## 시작하기
-<br>
 <br>
 
 1. `git clone` 
@@ -19,8 +16,7 @@
     * MariaDB 다운로드, 설정 후 `.env` 및 `.dev.env` 파일을 local option에 맞게 설정해주세요.
 4. `npm start `를 실행하면 **3001**번(혹은 .env에 설정되어있는 포트로) 포트로 서버가 켜집니다.
 <br>
-<br>
-<br>
+
 <br>
 
 ## Stack 
@@ -73,17 +69,14 @@
 
 
 ---
-<br>
-<br>
+
 
 ### 	/
-<br>
-<br>
-<br>
+
 
 ​	기본 api입니다.
 <br>
-<br>
+
 
 ---
 
@@ -101,8 +94,7 @@
   `uploads`폴더에 생성된 사진 이름을 확장자까지 입력하면 사진이 삭제됩니다.
 <br>
 <br>
-<br>
-<br>
+
 
 ---
 
@@ -112,7 +104,6 @@
 
 - /suer/{search} (GET)
   - Parameters로 찾고자 하는 유저 keyword를 입력하면 nickname 혹은 id가 일치하는 검색 결과를 반환합니다.
-<br>
 <br>
 <br>
 
@@ -145,7 +136,6 @@
 - /signature/{signId}
   - 서명 아이디로 서명의 정보를 반환받습니다.
   - 개인 서명의 경우 본인의 경우에만 정보를 반환받을 수 있으며, 팀 서명의 경우 권한이 있는 경우에만 승인됩니다.
-<br>
 <br>
 <br>
 
@@ -199,8 +189,7 @@
   - 유저가 소속된 팀에서 유저 개인의 권한 정보를 반환 받습니다.
 <br>
 <br>
-<br>
-<br>
+
 
 ---
 ### auth
