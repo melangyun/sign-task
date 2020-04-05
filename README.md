@@ -31,9 +31,12 @@
 
 > **Swagger UI**를 사용하여, 서버 실행 후 `localhost:{port}/api` 주소로 접속하면 간단한 API 테스팅을 할 수 있습니다.
 
-`/auth/login`과 `/auth/register`, `/`루드패스와  `/api` API문서를 제외하고 전체 등록된 유저에게만 제공되는 서비스로 구현되어 로그인이 필요합니다.
+`/auth/login`과 `/auth/register`, `/`요청과  `/api` API문서를 제외하고 전체 등록된 유저에게만 제공되는 서비스로 구현되어 로그인이 필요합니다.
 
-유저 등록 `/auth/register` 이후 `/auth/login`으로 JWT 토큰을 발급받아 페이지 우상단의 **Authorize** 버튼에 token을 입력하면 header 설정을 간단히 할 수 있습니다.
+* 유저 등록 
+
+`/auth/register` 이후 `/auth/login`으로 JWT 토큰을 발급받아 페이지 우상단의 **Authorize** 버튼에 token을 입력하면 header 설정을 간단히 할 수 있습니다.
+
 ---
 
 ### 	/
