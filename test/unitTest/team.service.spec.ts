@@ -3,6 +3,8 @@ import { TestModule } from '../test.module';
 import { TeamService } from '../../src/modules/team/team.service';
 import { User } from '../../src/modules/user/user.entity';
 import { Team } from '../../src/modules/team/team.entity';
+import { TeamUser } from '../../src/modules/team/teamuser.entity';
+import { signatureAuth } from '../../src/modules/signature/signature.enum';
 
 
 describe("TeamService", () => {
@@ -22,6 +24,12 @@ describe("TeamService", () => {
         user.password = "1234";
         user.nickname = "관리자";
         await user.save()
+
+        const member = new User();
+        member.id = "member";
+        member.password = "1234";
+        member.nickname = "참여자";
+        await member.save()
         
       });
 
@@ -81,32 +89,58 @@ describe("TeamService", () => {
             
         });
     });
-    
-    describe("verifyUser (METHOD)", () => {
-        
-    });
-
-
 
     describe("addUser (METHOD)", () => {
+        it("should be added team member", async () => {
+            const team = new Team();
+            team.id = 1;
+            const member = new User();
+            member.id = "member";
 
+            await teamService.addUser(team, member);
+
+            const teamUser = await TeamUser.findOne({team , user:member});
+            expect(teamUser.auth).toHaveProperty(signatureAuth.lookup);
+            expect(teamUser.auth).toHaveProperty(signatureAuth.delete);
+            expect(teamUser.auth).toHaveProperty(signatureAuth.add);
+        });
+    });
+
+    describe("findAllMyTeam (METHOD)", () => {
+        it("should find my team", async () => {
+            const userId = "admin";
+            const teamsByLeader:Team[] = await teamService.findAllMyTeam(userId);
+
+            expect(teamsByLeader.length).toEqual(1);
+            expect(teamsByLeader.length).not.toEqual(2);
+            expect(teamsByLeader[0].name).toEqual("화이팀");
+            expect(teamsByLeader[0].id).toEqual(1);
+        });
+        it("should return Empty array ", async () => {
+            const userId = "member";
+            const teamByLeader:Team[] = await teamService.findAllMyTeam(userId);
+
+            expect(teamByLeader.length).toEqual(0);
+        });
+    });
+
+    describe("findAllJoinTeam (METHOD)", () => {
+        it("Even if you participate as a team leader, should be registered as a participant.", async () => {
+            const userId = "admin"
+            const teamsByMember:Team[] = await teamService.findAllJoinTeam(userId);
+
+            expect(teamsByMember.length).toEqual(1);
+            expect(teamsByMember.length).not.toEqual(2);
+            expect(teamsByMember[0].leader).toEqual("admin");
+            expect(teamsByMember[0].id).not.toEqual(2);
+        });
     });
 
     describe("modifyPermissions (METHOD)", () => {
 
     });
 
-    describe("findAllMyTeam (METHOD)", () => {
 
-    });
-
-    describe("findAllMyTeam (METHOD)", () => {
-
-    });
-
-    describe("findAllJoinTeam (METHOD)", () => {
-
-    });
 
     describe("getUsers (METHOD)", () => {
 

@@ -1,9 +1,9 @@
-import { Entity, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, BaseEntity } from "typeorm";
 import { Team } from "./team.entity";
 import { User } from "../user/user.entity";
 
 @Entity()
-export class TeamUser{
+export class TeamUser extends BaseEntity{
     @ManyToOne( type => Team, team => team.teamUsers, { primary: true } )
     team!: Team;
 
