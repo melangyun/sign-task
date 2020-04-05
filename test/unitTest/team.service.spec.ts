@@ -195,7 +195,31 @@ describe("TeamService", () => {
     });
 
     describe("deleteUser (METHOD)", () => {
+        it("should be rejected team leader", async () => {
+            const memberId = "admin";
+            const teamId = 2;
+            const team = await Team.findOne({id :teamId});
+            const user = new User();
+            user.id = memberId;
 
+            teamService.deleteUser(memberId, team, user).catch(({status, message}) => {
+                expect(status).toEqual(403);
+                expect(message).toEqual("Can't delete TeamLeader");
+            })
+        });
+
+        it("should be delete team member", async () => {
+            const memberId = "member";
+            const teamId = 2;
+            const team = await Team.findOne({id :teamId});
+            const user = new User();
+            user.id = memberId;
+
+            await teamService.deleteUser(memberId, team, user);
+            const result:TeamUser|undefined = await TeamUser.findOne({ team , user});
+            
+            expect(result).toBeFalsy();
+        });
     });
 
 
