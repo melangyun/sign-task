@@ -29,7 +29,7 @@ export class UserService {
         const { id, password, nickname } = userDTO;
         const user = await this.userRepository.findOne({id});
         if(user) {
-            throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
+            throw new HttpException("User already exists", HttpStatus.FORBIDDEN);
         }
         const hashedPw = await this.encryptToHash(password);
         const registerUser: User = await this.userRepository.save( { id, password : hashedPw , nickname } );

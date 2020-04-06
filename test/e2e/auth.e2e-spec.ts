@@ -49,7 +49,7 @@ describe('AUTH', () => {
       .expect(({body})=> {
         expect(body.message).toEqual("User already exists");
       })
-      .expect(HttpStatus.BAD_REQUEST);
+      .expect(HttpStatus.FORBIDDEN);
     });
     
   })
