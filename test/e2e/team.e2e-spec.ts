@@ -163,7 +163,7 @@ describe('TEAM', () => {
   // 팀 삭제
   describe( "/team (DELETE)" ,() => {
 
-    const deleteTeamDTO:DeleteTeamDTO = { "teamId" : 100 };
+    const deleteTeamDTO:DeleteTeamDTO = { "teamId" : 1 };
 
     // 로그인 없이는 reject
     it("should reject delete team without login", () => {
@@ -175,17 +175,6 @@ describe('TEAM', () => {
           expect(body.message).toEqual("Unauthorized");
         });
    });
-
-   it("should reject invalid team", () => {
-    return request(app.getHttpServer())
-      .delete("/team")
-      .send(deleteTeamDTO)
-      .expect(HttpStatus.UNAUTHORIZED)
-      .expect(({body}) => {
-        expect(body.message).toEqual("Unauthorized");
-      });
- });
-
 
     // 정상 삭제 성공
     it("should delete participating team", () => {

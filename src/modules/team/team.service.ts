@@ -63,9 +63,6 @@ export class TeamService{
     async deleteTeam(deleteTeamDTO : DeleteTeamDTO): Promise<string> {
         const { teamId } = deleteTeamDTO;
         const result:UpdateResult = await this.teamRepository.update(teamId , {isActive : false}) ;
-        if (!result.raw.changedRows) {
-            throw new HttpException("Invalid teamId", HttpStatus.NOT_FOUND);
-        }
 
         return result.raw.message;
     }
