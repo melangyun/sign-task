@@ -1,34 +1,32 @@
 version: '3.7'
 
 services:
-  serverContainer:
-    image: signature
+  app:
+    build: :
+        context: .
+        dockerfile: ./Dockerfile
     restart: always
     ports:
-      - 3001:3001
+      - 3000:3000
     depends_on:
-      - dbcontainer
-    links:
-        - "dbcontainer:myDB"
+      - database
       # - business-api
 
   # business-api:
   #   build: ./api
   #   ports: 8081
 
-  dbcontainer:
+  database:
     image: mariadb
     ports:
       - 3306:3306
     restart: always
-    volumes: 
-      - ./data:/var/lib/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1112
       MYSQL_DATABASE: sign
       MYSQL_DATABASE: signTest
-      MYSQL_USER: yun
+      MYSQL_USER: root
       MYSQL_PASSWORD: 1112
 
 #volumes: data-volume:
