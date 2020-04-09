@@ -1,7 +1,7 @@
 # Signature shared Program Server Code For coding test
 <br>
 
-개인 서명을 저장하고, 팀을 만들어 팀 내에서 공유하기 위한 서비스 입니다.
+개인 서명을 저장하고, 팀을 만들어 팀 내에서 공유하기 위한 서버 서비스 입니다.
 <br>
 
 
@@ -15,8 +15,9 @@
 3. MariaDB를 사용하여 설정이 필요합니다.
     * MariaDB 다운로드, 설정 후 `.env` 및 `.dev.env` 파일을 local option에 맞게 설정해주세요.
 4. `npm start `를 실행하면 **3001**번(혹은 .env에 설정되어있는 포트로) 포트로 서버가 켜집니다.
+5. DockerFile과  docker-compose 파일이 작성되어 있어, `docker build --tag sign:1.0`과 `docker-compose up`을 통하여 docker를 통하여 실행 시킬 수 있습니다.<br>
+   - docker를 통하여 실행시키기 위해서는 .env파일의 수정이 필요합니다.
 <br>
-
 <br>
 
 ## Stack 
@@ -26,6 +27,7 @@
 - mariaDB
 - typescript
 - typeORM
+- Docker
 <br>
 <br>
 <br>
