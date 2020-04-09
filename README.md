@@ -1,4 +1,4 @@
-# Signature shared Program Server Code For coding test
+# Signature shared Program Server Code
 <br>
 
 개인 서명을 저장하고, 팀을 만들어 팀 내에서 공유하기 위한 서버 서비스 입니다.
